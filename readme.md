@@ -1,5 +1,5 @@
 ## **LEMP Server on Ubuntu 16.04 Xenial**
-### Nginx Compiled from Source, PHP7, MariaDB 10, FastCGI Cache, HTTP2 support, and CloudFlare SSL with a Self-Signed Cert
+### Nginx Compiled from Source, PHP 7, MariaDB 10, FastCGI Cache, HTTP2 support, and CloudFlare SSL with a Self-Signed Cert
 
 We're going to walk through a basic LEMH stack install for hosting WordPress sites. As you might have been hearing as of late, Nginx, PHP7, and MariaDB makes WordPress run faster than other options, so building a setup like this will usually get you the most bang for your hosting buck. In addition we'll also include FastCGI Cache, a rather unique method of file caching which is built right into Nginx. By using FastCGI Cache, we're bypassing the more resource-intensive solutions based off PHP and WordPress like W3 Total Cache or WP Super Cache. We'll also be self-signing an SSL certificate on the server-side, since we're going to be using a free SSL certificate issued by CloudFlare.
 
@@ -37,8 +37,8 @@ You'll want to check their sites to ensure you're downloading the latest version
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/)
 ```
 cd /usr/src/
-wget http://nginx.org/download/nginx-1.13.4.tar.gz
-tar -xzvf nginx-1.13.4.tar.gz
+wget http://nginx.org/download/nginx-1.13.5.tar.gz
+tar -xzvf nginx-1.13.5.tar.gz
 wget https://github.com/openresty/headers-more-nginx-module/archive/v0.32.tar.gz
 tar -xzf v0.32.tar.gz
 wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
@@ -48,7 +48,7 @@ tar -xzf openssl-1.1.0f.tar.gz
 ```
 
 ##### **Brotli Compression** 
-We're adding in support for Brotli. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip.
+We're adding in support for Brotli. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, you'll be ready.
 
 ```
 cd /usr/src
@@ -61,7 +61,7 @@ git submodule update --init --recursive
 ##### **Installing Nginx**
 Now it's time to compile Nginx using the parts we've downloaded. Don't forget to change the openssl, cache purge, and more headers module versions inside of the `./configure` command.
 ```
-cd /usr/src/nginx-1.13.4
+cd /usr/src/nginx-1.13.5
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0f --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.32 --add-module=/usr/src/ngx_brotli
 make
 sudo checkinstall
@@ -85,12 +85,12 @@ sudo rm -rf /etc/nginx/sites-available
 ```
 
 ##### **Automatically Starting Nginx**
-Now that we've installed Nginx, we'll need to make it start up automatically each time the server reboots. Ubuntu 15.04 uses SystemD to handle bootup processing, so that's what we'll be working with.
+Now that we've installed Nginx, we'll need to make it start up automatically each time the server reboots. Ubuntu 16.04 uses SystemD to handle bootup processing, so that's what we'll be working with.
 ```
 sudo nano /lib/systemd/system/nginx.service
 ```
 Now paste in the code below, then save.
-```
+>
 # Stop dance for nginx
 # =======================
 #
@@ -125,20 +125,22 @@ Finally, let's double check that it's working, and then turn on Nginx.
 sudo systemctl enable nginx.service
 sudo systemctl start nginx.service
 sudo systemctl status nginx.service
-```
+>
 
 In the future, you can restart Nginx by typing `sudo service nginx restart`
 
 ----------
 
-### **PHP7**
-#######################3333 follow this https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04
+### **PHP 7**
+With Nginx out of the way, it's time to install PHP 7
 ```
 sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
+```
+Now we're going to make a simple change to the php.ini file. This is a security related change, so be sure to do it.
+```
 sudo nano /etc/php/7.0/fpm/php.ini
-
-				/etc/php/7.0/fpm/php.ini
-cgi.fix_pathinfo=0
+```
+Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`
 
 sudo service php7.0-fpm restart
 
@@ -276,7 +278,7 @@ Add **yourdomain.com.conf** to **/etc/nginx/conf.d**. This folder may hold as ma
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
 ```
 
-Tell Nginx what domain you want to serve by starting up nano and replacing all instances of yourdomain.com with your actual domain. This needs to match the commands you entered just a few lines above, otherwise it won't work.
+Tell Nginx what domain you want to serve by starting up nano and replacing all instances of `yourdomain.com` with your actual domain. This needs to match the commands you entered just a few lines above, otherwise it won't work.
 
 ```
 sudo nano /etc/nginx/conf.d/yourdomain.com.conf
