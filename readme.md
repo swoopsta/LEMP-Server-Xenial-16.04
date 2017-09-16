@@ -161,7 +161,7 @@ Then simply restart PHP and we're done.
 sudo service php7.0-fpm restart
 ```
 
-### **MariaDB 10.2** 
+### **MariaDB 10** 
 We're using MariaDB instead of MySQL, as the performance is great with WordPress. We're running the **Stable** release of MariaDB. You can find the latest version at [https://downloads.mariadb.org/](https://downloads.mariadb.org/).
 
 ----------
@@ -233,7 +233,7 @@ Here we're going to write a very basic php file that will display the informatio
 sudo echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 ```
 
-Point your browser to http://ipa.ddr.ess/phpinfo.php
+Point your browser to http://ipa.ddr.ess/phpinfo.php.
 
 ----------
 
@@ -245,7 +245,7 @@ sudo update-rc.d -f apache2 remove
 sudo ln -s /usr/share/phpmyadmin /var/www/html
 ```
 
-Point your browser to http://ipa.ddr.ess/phpmyadmin
+Point your browser to http://ipa.ddr.ess/phpmyadmin.
 
 ----------
 
