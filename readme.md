@@ -316,6 +316,7 @@ You'll want a way to purge the cache when you make changes to the site, such as 
 ##### **Nginx Cache WordPress Plugin**
 
 We like RTCamp's Nginx Helper Plugin. You'll want to go to the WordPress Dashboard, then Settings/ Nginx Helper. Turn on purging, and select the conditions you want to trigger the purge. Finally, select the timestamp option at the bottom to display your page's build time in the source code.
+
 Download: [Nginx Helper](https://wordpress.org/plugins/nginx-helper/)
 
 ----------
@@ -327,16 +328,16 @@ We can check the status of any page by viewing the headers that are sent along w
 
 You'll encounter 4 different messages based on the cache type. `X-Cached: HIT`, `X-Cached: MISS`, `X-Cached: EXPIRED`, or `X-Cached: BYPASS`. 
 
-######X-Cached: HIT
+#####X-Cached: HIT
 You're being served a cached version of the page.
 
-######X-Cached: MISS 
+#####X-Cached: MISS 
 The server did not have a cached copy of that page, so you're being fed a live version instead. Initially all pages will show as `X-Cached: MISS`. Once they've been visited, Nginx will store a copy of that code for future visitors.
 
-######X-Cached: EXPIRED 
+#####X-Cached: EXPIRED 
 The version that was stored on the server is too old, and you're seeing a live version instead.
 
-######X-Cached: BYPASS 
+#####X-Cached: BYPASS 
 We've told Nginx skip caching a page if it matches a set of criteria. For example, we don't want to cache any page beginning with `WP-`, or any page visited by a logged in user or recent commenter. Depending on the nature of your site, there may be additional things you'll want to set to avoid being cached.
 
 ----------
