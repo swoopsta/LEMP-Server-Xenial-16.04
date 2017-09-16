@@ -1,7 +1,7 @@
 ## **LEMP Server on Ubuntu 16.04 Xenial**
 ### Nginx Compiled from Source, PHP 7, MariaDB 10, FastCGI Cache, HTTP2 support, and CloudFlare SSL with a Self-Signed Cert
 
-We're going to walk through a basic LEMH stack install for hosting WordPress sites. As you might have been hearing as of late, Nginx, PHP7, and MariaDB makes WordPress run faster than other options, so building a setup like this will usually get you the most bang for your hosting buck. In addition we'll also include FastCGI Cache, a rather unique method of file caching which is built right into Nginx. By using FastCGI Cache, we're bypassing the more resource-intensive solutions based off PHP and WordPress like W3 Total Cache or WP Super Cache. We'll also be self-signing an SSL certificate on the server-side, since we're going to be using a free SSL certificate issued by CloudFlare.
+We're going to walk through a basic LEMP stack install for hosting WordPress sites. As you might have been hearing as of late, Nginx, PHP7, and MariaDB makes WordPress run faster than other options, so building a setup like this will usually get you the most bang for your hosting buck. In addition we'll also include FastCGI Cache, a rather unique method of file caching which is built right into Nginx. By using FastCGI Cache, we're bypassing the more resource-intensive solutions based off PHP and WordPress like W3 Total Cache or WP Super Cache. We'll also be self-signing an SSL certificate on the server-side, since we're going to be using a free SSL certificate issued by CloudFlare.
 
 ----------
 
@@ -20,6 +20,8 @@ sudo rm -rf /var/lib/mysql
 sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
 ##### **Changing SSH Port**
+We like to add a tiny bit of extra security by changing the default SSH port. This is not a replacement for a firewall.
+
 Change port 22 to whatever number you'd like.
 ```
 nano /etc/ssh/sshd_config
@@ -29,12 +31,12 @@ service ssh restart
 ----------
 
 ### **Nginx**
-Since HTTP2 requires an OpenSSL version of 1.0.2 or greater, we're going to compile Nginx from source so we can take advantage of this.
+We prefer using the **Mainline** version of Nginx instead of the **Stable** version. Mainline tends to have improved bleeding edge feature support, but this can lead to some instability. If you want Stable, change the version in the code below to whatever the latest Stable release is. We're going to be compiling Nginx from source since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
 
 ##### **Downloading**
 First we'll need to download the latest versions of Nginx and the various modules we're using.
 You'll want to check their sites to ensure you're downloading the latest version.
-Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/)
+Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
 ```
 cd /usr/src/
 wget http://nginx.org/download/nginx-1.13.5.tar.gz
@@ -48,7 +50,7 @@ tar -xzf openssl-1.1.0f.tar.gz
 ```
 
 ##### **Brotli Compression** 
-We're adding in support for Brotli. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, you'll be ready.
+We're adding in support for Brotli compression. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, yyour site will be ready to take advantage of this.
 
 ```
 cd /usr/src
@@ -59,16 +61,18 @@ git submodule update --init --recursive
 ```
 
 ##### **Installing Nginx**
-Now it's time to compile Nginx using the parts we've downloaded. Don't forget to change the openssl, cache purge, and more headers module versions inside of the `./configure` command.
+Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that difer from the versions we had listed above, don't forget to change the OpenSSL, Nginx Cache Purge, and Nginx More Headers module versions inside of the `./configure` command below. 
 ```
 cd /usr/src/nginx-1.13.5
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0f --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.32 --add-module=/usr/src/ngx_brotli
 make
 sudo checkinstall
 ```
-Using the checkinstall command tells the server to package our compiled source into a more easily managed .deb package file. Move through the prompts, you can tell it not to list the installation files, and yes to exclude them from the package. Since Nginx updates quite frequently, doing this allows us to easily upgrade later on. To upgrade to the latest version, double check Nginx and module versions (as this guide may not be up to date), then simply repeat the installation process above. Restart Nginx and you should be running the latest version.
+Using the checkinstall command tells the server to package our compiled source into a more easily managed .deb package file. Move through the prompts. You can tell it not to list the installation files, and yes to exclude them from the package. Since Nginx updates quite frequently, doing this allows us to easily upgrade later on. To upgrade to the latest version, double check Nginx and module versions (as this guide may not be up to date), then simply repeat the installation process above. Restart Nginx and you should be running the latest version.
 
-Double check that we've got everything installed correctly by using the `nginx -Vv` command. This will also list all installed modules, and your openssl version.
+Once again, get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
+
+Double check that we've got everything installed correctly by using the `nginx -Vv` command. This will also list all installed modules, and your OpenSSL version.
 
 ##### **Creating Directories and Setting Permissions** 
 Here we're going to ensure that the right folders are in place for our config.
@@ -142,7 +146,7 @@ sudo nano /etc/php/7.0/fpm/php.ini
 ```
 Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
 
-You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside of the **php.ini** file as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
+You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside **php.ini** as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
 ```
 upload_max_filesize = 32M
 post_max_size = 48M
@@ -158,7 +162,7 @@ sudo service php7.0-fpm restart
 ```
 
 ### **MariaDB 10.2** 
-We're using MariaDB instead of MySQL, as the performance is great with WordPress. We're running the 'Stable' release of MariaDB. You can find the latest version at [https://downloads.mariadb.org/](https://downloads.mariadb.org/).
+We're using MariaDB instead of MySQL, as the performance is great with WordPress. We're running the **Stable** release of MariaDB. You can find the latest version at [https://downloads.mariadb.org/](https://downloads.mariadb.org/).
 
 ----------
 
@@ -189,7 +193,7 @@ Test to make sure things are working by logging into MySQL, then exiting.
 ```
 sudo mysql -v -u root -p
 ```
-You can exit MariaDB by typing `exit`
+You can exit MariaDB by typing `exit`.
 
 ----------
 
@@ -197,7 +201,7 @@ You can exit MariaDB by typing `exit`
 We're going to take a moment to move some files and verify that things are working.
 
 #### **.conf Files** 
-Now it's time to move [nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf), [wpsecurity.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/wpsecurity.conf), and [fileheaders.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/fileheaders.conf) into **/etc/nginx**. 
+Now it's time to move [nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf), [wpsecurity.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/wpsecurity.conf), and [fileheaders.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/fileheaders.conf) into **/etc/nginx**. 
 
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf -O /etc/nginx/nginx.conf
@@ -224,7 +228,7 @@ sudo nano /etc/nginx/nginx.conf
 ```
 
 #### **Get Your PHP Installation Info** 
-Here we're going to write a very basic php file that will give us this information. We're going to send it straight to your server's default folder, which will be **/var/www/html**. By contrast, domains will be using **/var/www/yourdomain.com/html**.
+Here we're going to write a very basic php file that will display the information related to our PHP installation. This lets us verify that PHP 7 is working correctly. In addition, you can use this to reference your server's PHP configuration settings in the future. We're going to send it straight to your server's default folder, which will be **/var/www/html**. By contrast, domains will be using **/var/www/yourdomain.com/html**.
 ```
 sudo echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 ```
@@ -247,7 +251,7 @@ Point your browser to http://ipa.ddr.ess/phpmyadmin
 
 ### **WordPress** 
 ##### **Creating a MySQL Database** 
-We're going to create the database by command line because we're cool. You can also do this directly though phpMyAdmin, if you're not as cool. Replace the `database`, `user`, and `password` variables in the code below.
+We're going to create the database by command line because we're cool. You can also do this directly though phpMyAdmin if you're not as cool. Replace the `database`, `user`, and `password` variables in the code below.
 ```
 mysql -u root -p
 CREATE DATABASE database;
@@ -260,7 +264,7 @@ exit
 ##### **Install WordPress** 
 We're going to create a few directories needed for WordPress, set the permissions, and download WordPress. We're also going to just remove the Hello Dolly plugin, because obviously.
 
-**Note:** We're installing files to the **yourdomain.com** directory. In all of the commands below, change **yourdomain.com** to the name of your site.
+**Note:** We're installing files to the **/var/www/yourdomain.com/html** directory. In all of the commands below, change **yourdomain.com** to the name of your site.
 ```
 sudo mkdir -p /var/www/yourdomain.com/html						
 cd /var/www/yourdomain.com/html
@@ -271,7 +275,7 @@ rmdir /var/www/yourdomain.com/html/wordpress
 sudo rm -f /var/www/yourdomain.com/html/wp-content/plugins/hello.php
 sudo mkdir -p /var/www/yourdomain.com/html/wp-content/uploads
 ```
-It's time to upload any files you might have (themes, plugins, uploads, etc, wp-config, etc).
+If you're transfering a site over, it's time to upload any files you might have (themes, plugins, uploads, etc, wp-config, etc). You'll want to do this before assigning permissions to the directories. If not, proceed to the next step.
 
 ##### **Secure WordPress** 
 Once you're done uploading files, we'll want to secure WordPress' directory and file permissions.
@@ -286,15 +290,11 @@ Now that we've got the directory structure of your domain squared away, we'll ne
 
 Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host.
 
+
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
 ```
-
-Tell Nginx what domain you want to serve by starting up nano and replacing all instances of `yourdomain.com` with your actual domain. This needs to match the commands you entered just a few lines above, otherwise it won't work.
-
-```
-sudo nano /etc/nginx/conf.d/yourdomain.com.conf
-```
+From this point on in the tutorial, any time you see `yourdomain.com.conf` you'll want to alter that text to whatever your domain actually is. You'll probably want to edit and rename the [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) that you just downloaded as well.
 
 ----------
 
