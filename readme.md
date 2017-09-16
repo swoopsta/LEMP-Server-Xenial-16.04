@@ -71,7 +71,7 @@ Using the checkinstall command tells the server to package our compiled source i
 Double check that we've got everything installed correctly by using the `nginx -Vv` command. This will also list all installed modules, and your openssl version.
 
 ##### **Creating Directories and Setting Permissions** 
-Here we're going to ensure that the right folders are in place for our config. In addition, since we might be hosting multiple domains on this server, we've told our **yourdomain.com.conf** files to log to a dedicated folder inside **/var/log**, just like Nginx or PHP7.
+Here we're going to ensure that the right folders are in place for our config.
 ```
 sudo mkdir -p /var/www/html
 sudo mkdir -p /var/lib/nginx/fastcgi
@@ -90,7 +90,7 @@ Now that we've installed Nginx, we'll need to make it start up automatically eac
 sudo nano /lib/systemd/system/nginx.service
 ```
 Now paste in the code below, then save.
->
+```
 # Stop dance for nginx
 # =======================
 #
@@ -125,27 +125,40 @@ Finally, let's double check that it's working, and then turn on Nginx.
 sudo systemctl enable nginx.service
 sudo systemctl start nginx.service
 sudo systemctl status nginx.service
->
+```
 
-In the future, you can restart Nginx by typing `sudo service nginx restart`
+In the future, you can restart Nginx by typing `sudo service nginx restart`.
 
 ----------
 
 ### **PHP 7**
-With Nginx out of the way, it's time to install PHP 7
+With Nginx out of the way, it's time to install PHP 7.
 ```
 sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
 ```
-Now we're going to make a simple change to the php.ini file. This is a security related change, so be sure to do it.
+Now we're going to make a simple change to the **php.ini** file. This is a security related change, so be sure to do it.
 ```
 sudo nano /etc/php/7.0/fpm/php.ini
 ```
-Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`
+Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
 
+You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside of the **php.ini** file as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
+```
+upload_max_filesize = 32M
+post_max_size = 48M
+memory_limit = 196M
+max_execution_time = 600
+max_input_vars = 10000
+max_input_time = 400
+```
+
+Then simply restart PHP and we're done.
+```
 sudo service php7.0-fpm restart
+```
 
 ### **MariaDB 10.2** 
-We're using MariaDB instead of MySQL, as the performance is great with WordPress.
+We're using MariaDB instead of MySQL, as the performance is great with WordPress. We're running the 'Stable' release of MariaDB. You can find the latest version at [https://downloads.mariadb.org/](https://downloads.mariadb.org/).
 
 ----------
 
@@ -160,7 +173,7 @@ At the end of this installation, MariaDB will ask you to set your password, don'
 ```	
 sudo apt-get update && apt-get install mariadb-server -y
 ```
-Make sure that MariaDB has upgraded to the latest files by running this again.
+Make sure that MariaDB has upgraded to the latest release by running this again.
 ```
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
 ```
@@ -184,19 +197,18 @@ You can exit MariaDB by typing `exit`
 We're going to take a moment to move some files and verify that things are working.
 
 #### **.conf Files** 
-Now it's time to move [nginx.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/nginx.conf "/etc/nginx/nginx.conf"), [wpsecurity.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/wpsecurity.conf "/etc/nginx/wpsecurity.conf"), [fileheaders.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/fileheaders.conf "/etc/nginx/fileheaders.conf"), and [hhvm.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/hhvm.conf "/etc/nginx/hhvm.conf") into **/etc/nginx**. 
+Now it's time to move [nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf), [wpsecurity.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/wpsecurity.conf), and [fileheaders.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/nginx/fileheaders.conf) into **/etc/nginx**. 
 
 ```
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/nginx.conf -O /etc/nginx/nginx.conf
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/wpsecurity.conf -O /etc/nginx/wpsecurity.conf
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/fileheaders.conf -O /etc/nginx/fileheaders.conf
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/hhvm.conf -O /etc/nginx/hhvm.conf
+sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf -O /etc/nginx/nginx.conf
+sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/wpsecurity.conf -O /etc/nginx/wpsecurity.conf
+sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/fileheaders.conf -O /etc/nginx/fileheaders.conf
 ```
 
-You'll also want to move [default.conf](https://github.com/VisiStruct/LEMH-Server/blob/master/conf.d/default.conf "/etc/nginx/conf.d/default.conf") into **/etc/nginx/conf.d**. 
+You'll also want to move [default.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf "/etc/nginx/conf.d/default.conf") into **/etc/nginx/conf.d**. 
 
 ```
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/conf.d/default.conf -O /etc/nginx/conf.d/default.conf
+sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf -O /etc/nginx/conf.d/default.conf
 ```
 
 Then restart HHVM and Nginx.
@@ -205,7 +217,7 @@ sudo service nginx restart && sudo service php7.0-fpm restart
 ```
 
 ##### **Set Nginx Worker Processes**
-Set worker processes to the number of CPUs you have available. We can find this information by using the `grep -c processor /proc/cpuinfo` command and editing the **nginx.conf** file. Enter whatever value `grep -c processor /proc/cpuinfo` lists.
+Set worker processes to the number of CPUs you have available. We can find this information by using the `grep -c processor /proc/cpuinfo` command and editing the **[nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf)** file. Enter whatever value `grep -c processor /proc/cpuinfo` lists.
 ```
 grep -c processor /proc/cpuinfo
 sudo nano /etc/nginx/nginx.conf
@@ -222,7 +234,7 @@ Point your browser to http://ipa.ddr.ess/phpinfo.php
 ----------
 
 ### **phpMyAdmin**
-Since phpMyAdmin is already available through the default Ubuntu 15.04 repos, this part is really easy. We're pointing our phpMyAdmin location to **/var/www/html**, which will make it available at your server's IP address. Alter the lines below to reflect a different location, such as a behind a domain.
+Since phpMyAdmin is already available through the default Ubuntu 16.04 repos, this part is really easy. We're pointing our phpMyAdmin location to **/var/www/html**, which will make it available at your server's IP address. Alter the lines below to reflect a different location, such as a behind a domain.
 ```
 sudo apt-get install phpmyadmin -y
 sudo update-rc.d -f apache2 remove
@@ -272,10 +284,10 @@ sudo chown -hR www-data:www-data /var/www/yourdomain.com/html/
 ##### **Install Nginx Site File**
 Now that we've got the directory structure of your domain squared away, we'll need to enable it in Nginx.
 
-Add **yourdomain.com.conf** to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host.
+Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host.
 
 ```
-sudo wget https://raw.githubusercontent.com/VisiStruct/LEMH-Server/master/nginx/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
+sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
 ```
 
 Tell Nginx what domain you want to serve by starting up nano and replacing all instances of `yourdomain.com` with your actual domain. This needs to match the commands you entered just a few lines above, otherwise it won't work.
@@ -287,7 +299,7 @@ sudo nano /etc/nginx/conf.d/yourdomain.com.conf
 ----------
 
 ### **Self-Signed SSL Certificate** 
-Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
+Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work. Once again, change `yourdomain.com` to whatever your actual domain is. 
 ```
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
 cd /etc/nginx/ssl
@@ -311,7 +323,7 @@ Download: [Nginx Helper](https://wordpress.org/plugins/nginx-helper/)
 ### **Checking FastCGI Cache** 
 It's always a good idea to make sure that what you think is working is in fact actually working. Since we don't want to serve cached versions of every page on the site, inside **hhvm.conf** we've added a list of pages and cookies that we want to avoid caching. To help shed light on things a bit, we've added the line `add_header X-Cached $upstream_cache_status;` inside **/etc/nginx/conf.d/yourdomain.com.conf**. This will tell us with certainty whether or not the page being served is the cached version. 
 
-We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Plugins exist for Mozilla FireFox and Google chrome that will make things a bit easier, we prefer Live HTTP Headers for Google Chrome [Live HTTP Headers for Google Chrome](https://chrome.google.com/webstore/detail/live-http-headers/iaiioopjkcekapmldfgbebdclcnpgnlo?utm_source=chrome-app-launcher-info-dialog "Live HTTP Headers for Google Chrome").
+We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Extensions exist for Mozilla FireFox and Google chrome that will make things a bit easier, we prefer the [HTTP Headers for Google Chrome](https://chrome.google.com/webstore/detail/http-headers/nioieekamcpjfleokdcdifpmclkohddp "HTTP Headers for Google Chrome") extension for Google Chrome.
 
 You'll encounter 4 different messages based on the cache type. `X-Cached: HIT`, `X-Cached: MISS`, `X-Cached: EXPIRED`, or `X-Cached: BYPASS`. 
 
@@ -325,52 +337,35 @@ The server did not have a cached copy of that page, so you're being fed a live v
 The version that was stored on the server is too old, and you're seeing a live version instead.
 
 ######X-Cached: BYPASS 
-We've told Nginx skip caching a page if it matches a set of criteria. For example, we don't want to cache any page beginning with `WP-`, or any page visited by a logged in user or recent commenter. Depending on the plugins you're running, there may be additional things you'll want to set to avoid being cached.
+We've told Nginx skip caching a page if it matches a set of criteria. For example, we don't want to cache any page beginning with `WP-`, or any page visited by a logged in user or recent commenter. Depending on the nature of your site, there may be additional things you'll want to set to avoid being cached.
 
 ----------
 
 ### **Optional Stuff** 
 ##### **WooCommerce and FastCGI Cache** 
-We really don't want Nginx to cache anything related to WooCommerce, as this could result in a customer's information being fed to others. So we're going to tackle this 3 different ways. Our **yourdomain.com.conf** file reflects these changes already, just uncomment the stuff you want to enable by removing.
+We really don't want Nginx to cache anything related to WooCommerce, as this could result in a customer's information being fed to others. So we're going to tackle this two different ways. Our [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) has the code commented out by default, as not everyone will be running woocommerce on their site.
 
-As you can see below, we're checking a number of locations for pages that we don't want Nginx to cache. The variables `/shop.*|/cart.*|/my-account.*|/checkout.*` should reflect WooCommerce's default page nstructure.
-```
-if ($request_uri ~* "(/shop.*|/cart.*|/my-account.*|/checkout.*|/addons.*|/wp-admin/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml|[a-z0-9_-]+-sitemap([0-9]+)?.xml)") {        
-	set $no_cache 1;
-	}
-```
+The first method of preventing WooCommerce caching has Nginx looking for pages of a corresponding WooCommerce name such as Shop, Cart, or Checkout. If you've altered the names of the default WooCommerce pages, you'll also need to make those changes inside this file otherwise they will be cached.
 	
-We'll want to add the variable `wp_woocommerce_session_[^=]*=([^%]+)%7C`. This avoids most woocommerce sessions.
-```
-if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|wp_woocommerce_session_[^=]*=([^%]+)%7C") {        
-	set $no_cache 1;
-	}
-```
+The second method avoids caching by looking to see if a WooCommerce session cookie has been set. If the user has interacted with a WooCommerce page on your site, this cookie will set and caching will be disabled for that user.
 
-We'll also want to turn on a check to see if a visitor has an item in their cart.
+Find the code below and uncomment it
+
 ```
-if ( $cookie_woocommerce_items_in_cart != "1" ) {
-	set $skip_cache 1;
-}
+#if ($request_uri ~* "/shop.*|/cart.*|/my-account.*|/checkout.*|/addons.*") {
+#		set $no_cache 1;
+#	}
+ 
+# If WooCommerce cookie is set, do not cache.
+#if ($http_cookie ~* "wp_woocommerce_session_[^=]*=([^%]+)%7C") {        
+#		set $no_cache 1;
+#	}
 ```
+    
+If you're still caching stuff during WooCommerce sessions, there is a third method inside the file that avoids caching if an item is in the cart. It's almost never needed, but we're just making you aware that it's in there.
 
 ### **Done!** 
 
 *Naturally, this tutorial is always subject to change, and could include mistakes or vulnerabilities that might result in damage to your site by malicious parties. We make no guarantee of the performance, and encourage you to read and thoroughly understand each setting and command before you enable it on a live production site.*
 
 *If we've helped you, or you've given up and want to hire a consultant to set this up for you, visit us at https://VisiStruct.com [VisiStruct.com](https://VisiStruct.com "VisiStruct.com")*
-
-
-
-FIND ALL INSTANCES OF HHVM AND FIX
-
-FIX .CONF FILE PATHS ON GITHUB
-
-ADD THE FOLLOWING TO php.ini     located at  etc/php/7.0/fpm/php.ini
-upload_max_filesize = 32M
-
-post_max_size = 48M
-memory_limit = 128M
-max_execution_time = 600
-max_input_vars = 10000
-max_input_time = 400
