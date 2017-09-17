@@ -15,7 +15,7 @@ export LANG=en_US.UTF-8
 ```
 ##### **Removing Stuff We Don't Need**
 ```
-sudo apt-get remove --purge mysql-server mysql-client mysql-common apache2* php5* -y
+sudo apt-get remove --purge mysql-server mysql-client mysql-common apache2* php5* nginx -y
 sudo rm -rf /var/lib/mysql
 sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
