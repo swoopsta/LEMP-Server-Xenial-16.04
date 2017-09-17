@@ -345,7 +345,7 @@ We've told Nginx skip caching a page if it matches a set of criteria. For exampl
 ##### **WooCommerce and FastCGI Cache** 
 We really don't want Nginx to cache anything related to WooCommerce, as this could result in a customer's information being fed to others. So we're going to tackle this two different ways. Our [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) has the code commented out by default, as not everyone will be running woocommerce on their site.
 
-The first method of preventing WooCommerce caching has Nginx looking for default WooCommerce paegs such as Shop, Cart, or Checkout. If you've altered the names of the default WooCommerce pages, you'll also need to make those changes inside this file otherwise they will be cached.
+The first method of preventing WooCommerce caching has Nginx looking for default WooCommerce pages such as Shop, Cart, or Checkout. If you've altered the names of the default WooCommerce pages, you'll also need to make those changes inside this file otherwise they will be cached.
 	
 The second method avoids caching by looking to see if a WooCommerce session cookie has been set. If the user has interacted with a WooCommerce page on your site, this cookie will set and caching will be disabled for that user.
 
