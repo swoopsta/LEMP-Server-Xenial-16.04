@@ -321,10 +321,9 @@ Download: [Nginx Helper](https://wordpress.org/plugins/nginx-helper/)
 ----------
 
 ### **Checking FastCGI Cache** 
-It's always a good idea to make sure that what you think is working is in fact actually working. Since we don't want to serve cached versions of every page on the site, inside **hhvm.conf** we've added a list of pages and cookies that we want to avoid caching. To help shed light on things a bit, we've added the line `add_header X-Cached $upstream_cache_status;` inside **/etc/nginx/conf.d/yourdomain.com.conf**. This will tell us with certainty whether or not the page being served is the cached version. 
+It's always a good idea to make sure that what you think is working is in fact actually working. Since we don't want to serve cached versions of every page on the site, inside [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) we've added rules that prevent certain pagees from being cached. To help shed light on things a bit, we've added the line `add_header X-Cached $upstream_cache_status;`. This will tell us with certainty whether or not the page being served is the cached version. 
 
-We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Extensions exist for Mozilla FireFox and Google chrome that will make things a bit easier, we prefer the [HTTP Headers for Google Chrome](https://chrome.google.com/webstore/detail/http-headers/nioieekamcpjfleokdcdifpmclkohddp "HTTP Headers for Google Chrome") extension for Google Chrome.
-
+We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Extensions exist for FireFox and Chrome that will make things a bit easier. We prefer the [HTTP Headers](https://chrome.google.com/webstore/detail/http-headers/nioieekamcpjfleokdcdifpmclkohddp "HTTP Headers for Google Chrome") Chrome extension.
 You'll encounter 4 different messages based on the cache type. `X-Cached: HIT`, `X-Cached: MISS`, `X-Cached: EXPIRED`, or `X-Cached: BYPASS`. 
 
 ###### X-Cached: HIT
