@@ -51,7 +51,6 @@ tar -xzf openssl-1.1.0f.tar.gz
 
 ##### **Brotli Compression** 
 We're adding in support for Brotli compression. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, yyour site will be ready to take advantage of this.
-
 ```
 cd /usr/src
 git clone https://github.com/google/ngx_brotli.git
@@ -68,6 +67,7 @@ cd /usr/src/nginx-1.13.5
 make
 sudo checkinstall
 ```
+
 Using the checkinstall command tells the server to package our compiled source into a more easily managed .deb package file. Move through the prompts. You can tell it not to list the installation files, and yes to exclude them from the package. Since Nginx updates quite frequently, doing this allows us to easily upgrade later on. To upgrade to the latest version, double check Nginx and module versions (as this guide may not be up to date), then simply repeat the installation process above. Restart Nginx and you should be running the latest version.
 
 Once again, get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
@@ -140,10 +140,12 @@ With Nginx out of the way, it's time to install PHP 7.
 ```
 sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
 ```
+
 Now we're going to make a simple change to the **php.ini** file. This is a security related change, so be sure to do it.
 ```
 sudo nano /etc/php/7.0/fpm/php.ini
 ```
+
 Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
 
 You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside **php.ini** as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
@@ -177,6 +179,7 @@ At the end of this installation, MariaDB will ask you to set your password, don'
 ```	
 sudo apt-get update && apt-get install mariadb-server -y
 ```
+
 Make sure that MariaDB has upgraded to the latest release by running this again.
 ```
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
@@ -193,6 +196,7 @@ Test to make sure things are working by logging into MySQL, then exiting.
 ```
 sudo mysql -v -u root -p
 ```
+
 You can exit MariaDB by typing `exit`.
 
 ----------
@@ -202,7 +206,6 @@ We're going to take a moment to move some files and verify that things are worki
 
 #### **.conf Files** 
 Now it's time to move [nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf), [wpsecurity.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/wpsecurity.conf), and [fileheaders.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/fileheaders.conf) into **/etc/nginx**. 
-
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf -O /etc/nginx/nginx.conf
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/wpsecurity.conf -O /etc/nginx/wpsecurity.conf
@@ -210,7 +213,6 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 ```
 
 You'll also want to move [default.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf "/etc/nginx/conf.d/default.conf") into **/etc/nginx/conf.d**. 
-
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf -O /etc/nginx/conf.d/default.conf
 ```
@@ -250,6 +252,8 @@ Point your browser to http://ipa.ddr.ess/phpmyadmin.
 ----------
 
 ### **WordPress** 
+From this point on in the tutorial, any time you see `yourdomain.com` you'll want to alter that text to whatever your domain actually is.
+
 ##### **Creating a MySQL Database** 
 We're going to create the database by command line because we're cool. You can also do this directly though phpMyAdmin if you're not as cool. Replace the `database`, `user`, and `password` variables in the code below.
 ```
@@ -263,8 +267,6 @@ exit
 
 ##### **Install WordPress** 
 We're going to create a few directories needed for WordPress, set the permissions, and download WordPress. We're also going to just remove the Hello Dolly plugin, because obviously.
-
-**Note:** We're installing files to the **/var/www/yourdomain.com/html** directory. In all of the commands below, change **yourdomain.com** to the name of your site.
 ```
 sudo mkdir -p /var/www/yourdomain.com/html						
 cd /var/www/yourdomain.com/html
@@ -288,13 +290,10 @@ sudo chown -hR www-data:www-data /var/www/yourdomain.com/html/
 ##### **Install Nginx Site File**
 Now that we've got the directory structure of your domain squared away, we'll need to enable it in Nginx.
 
-Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host.
-
-
+Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host. Remember to change the `/etc/nginx/conf.d/yourdomain.com.conf` portion to reflect your actual domain name.
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
 ```
-From this point on in the tutorial, any time you see `yourdomain.com.conf` you'll want to alter that text to whatever your domain actually is. You'll probably want to edit and rename the [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) that you just downloaded as well.
 
 ----------
 
@@ -351,7 +350,6 @@ The first method of preventing WooCommerce caching has Nginx looking for pages o
 The second method avoids caching by looking to see if a WooCommerce session cookie has been set. If the user has interacted with a WooCommerce page on your site, this cookie will set and caching will be disabled for that user.
 
 Find the code below and uncomment it
-
 ```
 #if ($request_uri ~* "/shop.*|/cart.*|/my-account.*|/checkout.*|/addons.*") {
 #		set $no_cache 1;
