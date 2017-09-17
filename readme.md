@@ -298,7 +298,7 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 ----------
 
 ### **Self-Signed SSL Certificate** 
-Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work. Once again, change `yourdomain.com` to whatever your actual domain is. 
+Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
 ```
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
 cd /etc/nginx/ssl
