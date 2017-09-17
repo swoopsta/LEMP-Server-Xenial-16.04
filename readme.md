@@ -141,7 +141,7 @@ With Nginx out of the way, it's time to install PHP 7.
 sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
 ```
 
-Now we're going to make a simple change to the **php.ini** file. This is a security related change, so be sure to do it.
+Now we're going to make a simple change to the **/etc/php/7.0/fpm/php.ini** file. This is a security related change, so be sure to do it.
 ```
 sudo nano /etc/php/7.0/fpm/php.ini
 ```
