@@ -349,7 +349,7 @@ The first method of preventing WooCommerce caching has Nginx looking for default
 	
 The second method avoids caching by looking to see if a WooCommerce session cookie has been set. If the user has interacted with a WooCommerce page on your site, this cookie will set and caching will be disabled for that user.
 
-Find the code below and uncomment it
+Find the code below and uncomment it to enable both methods.
 ```
 #if ($request_uri ~* "/shop.*|/cart.*|/my-account.*|/checkout.*|/addons.*") {
 #		set $no_cache 1;
