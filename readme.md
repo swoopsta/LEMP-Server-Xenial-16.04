@@ -217,7 +217,7 @@ You'll also want to move [default.conf](https://raw.githubusercontent.com/VisiSt
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf -O /etc/nginx/conf.d/default.conf
 ```
 
-Then restart HHVM and Nginx.
+Then restart PHP and Nginx.
 ```
 sudo service nginx restart && sudo service php7.0-fpm restart
 ```
