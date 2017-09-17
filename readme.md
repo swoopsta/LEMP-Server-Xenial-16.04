@@ -1,7 +1,7 @@
 ## **LEMP Server on Ubuntu 16.04 Xenial**
 ### Nginx Compiled from Source, PHP 7, MariaDB 10, FastCGI Cache, HTTP2 support, and CloudFlare SSL with a Self-Signed Cert
 
-We're going to walk through a basic LEMP stack install for hosting WordPress sites. As you might have been hearing as of late, Nginx, PHP7, and MariaDB makes WordPress run faster than other options, so building a setup like this will usually get you the most bang for your hosting buck. In addition we'll also include FastCGI Cache, a rather unique method of file caching which is built right into Nginx. By using FastCGI Cache, we're bypassing the more resource-intensive solutions based off PHP and WordPress like W3 Total Cache or WP Super Cache. We'll also be self-signing an SSL certificate on the server-side, since we're going to be using a free SSL certificate issued by CloudFlare.
+This step by step tutorial takes you through an advanced LEMP stack install for hosting WordPress sites. Building a server using Nginx, PHP 7, and MariaDB makes WordPress run faster than other options, so configuring a setup like this will usually get you the most bang for your hosting buck. We'll be utilizing FastCGI Cache, a webserver method of file caching which is built right into Nginx. By using FastCGI Cache, instead of WordPress caching plugins like W3 Total Cache or WP Super Cache, we're moving the job of caching pages to Nginx instead of PHP. This results in a faster site that can handle larger spikes in traffic. We'll also be self-signing an SSL certificate on the server-side, since we're going to be using a free SSL certificate issued by CloudFlare.
 
 ----------
 
