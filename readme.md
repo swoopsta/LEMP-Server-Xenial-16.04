@@ -6,7 +6,7 @@ This step by step tutorial takes you through an advanced LEMP stack install for 
 ----------
 
 ### **Basics**
-##### **Initial setup**
+##### **Initial Setup**
 ```
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
 sudo apt-get install autotools-dev build-essential checkinstall curl debhelper dh-systemd gcc git htop libbz2-dev libexpat-dev libgd2-noxpm-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libluajit-5.1-dev libmhash-dev libpam0g-dev libpcre3 libpcre3-dev libperl-dev libssl-dev libxslt1-dev make nano openssl po-debconf software-properties-common sudo tar unzip wget zlib1g zlib1g-dbg zlib1g-dev -y
@@ -191,7 +191,7 @@ MariaDB includes some test users and databases that we don't want to be using in
 mysql_secure_installation
 ```
 
-##### **Log into MariaDB** 
+##### **Log in to MariaDB** 
 Test to make sure things are working by logging into MySQL, then exiting.
 ```
 sudo mysql -v -u root -p
