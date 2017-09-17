@@ -7,6 +7,7 @@ This step by step tutorial takes you through an advanced LEMP stack install for 
 
 ### **Basics**
 ##### **Initial Setup**
+We're assuming you've spun up a fresh server here, so we'll need to make sure we have all of the tools needed to compile Nginx and install everything.
 ```
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
 sudo apt-get install autotools-dev build-essential checkinstall curl debhelper dh-systemd gcc git htop libbz2-dev libexpat-dev libgd2-noxpm-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libluajit-5.1-dev libmhash-dev libpam0g-dev libpcre3 libpcre3-dev libperl-dev libssl-dev libxslt1-dev make nano openssl po-debconf software-properties-common sudo tar unzip wget zlib1g zlib1g-dbg zlib1g-dev -y
@@ -33,7 +34,7 @@ service ssh restart
 ### **Nginx**
 We prefer using the **Mainline** version of Nginx instead of the **Stable** version. Mainline tends to have improved bleeding edge feature support, but this can lead to some instability. If you want Stable, change the version in the code below to whatever the latest Stable release is. We're going to be compiling Nginx from source since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
 
-##### **Downloading**
+##### **Downloading Nginx**
 First we'll need to download the latest versions of Nginx and the various modules we're using.
 You'll want to check their sites to ensure you're downloading the latest version.
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
