@@ -51,6 +51,8 @@ tar -xzf openssl-1.1.0f.tar.gz
 
 ##### **Brotli Compression** 
 We're adding in support for Brotli compression. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, your site will be ready to take advantage of this.
+
+You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli)
 ```
 cd /usr/src
 git clone https://github.com/google/ngx_brotli.git
@@ -289,7 +291,7 @@ sudo chown -hR www-data:www-data /var/www/yourdomain.com/html/
 ##### **Install Nginx Site File**
 Now that we've got the directory structure of your domain squared away, we'll need to enable it in Nginx.
 
-Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host. Remember to change the `/etc/nginx/conf.d/yourdomain.com.conf` portion to reflect your actual domain name.
+Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host. Remember to change the `/etc/nginx/conf.d/yourdomain.com.conf` portion in the back to reflect your actual domain name.
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
 ```
