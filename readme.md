@@ -39,20 +39,22 @@ You'll want to check their sites to ensure you're downloading the latest version
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
 ```
 cd /usr/src/
-wget http://nginx.org/download/nginx-1.13.5.tar.gz
-tar -xzvf nginx-1.13.5.tar.gz
-wget https://github.com/openresty/headers-more-nginx-module/archive/v0.32.tar.gz
-tar -xzf v0.32.tar.gz
+wget http://nginx.org/download/nginx-1.13.8.tar.gz
+tar -xzvf nginx-1.13.8.tar.gz
+wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz
+tar -xzf v0.33.tar.gz
 wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
 tar -xzf ngx_cache_purge-2.3.tar.gz
-wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz
-tar -xzf openssl-1.1.0f.tar.gz
+wget https://www.openssl.org/source/openssl-1.1.0g.tar.gz
+tar -xzf openssl-1.1.0g.tar.gz
 ```
 
 ##### **Brotli Compression** 
 We're adding in support for Brotli compression. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, your site will be ready to take advantage of this.
 
 You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli)
+
+First, if you're using this guide to update an exisiting installation to 
 ```
 cd /usr/src
 git clone https://github.com/google/ngx_brotli.git
@@ -63,8 +65,8 @@ git submodule update --init --recursive
 ##### **Installing Nginx**
 Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that difer from the versions we had listed above, don't forget to change the OpenSSL, Nginx Cache Purge, and Nginx More Headers module versions inside of the `./configure` command below. 
 ```
-cd /usr/src/nginx-1.13.5
-./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0f --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.32 --add-module=/usr/src/ngx_brotli
+cd /usr/src/nginx-1.13.8
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0g --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 make
 sudo checkinstall
 ```
@@ -137,14 +139,14 @@ In the future, you can restart Nginx by typing `sudo service nginx restart`.
 ----------
 
 ### **PHP 7**
-With Nginx out of the way, it's time to install PHP 7.
+With Nginx out of the way, it's time to install PHP 7. Find the latest release of PHP 7 at http://php.net/downloads.php
 ```
-sudo apt-get install php-fpm php-mysql php7.1-mysql php7.1-curl php7.1-gd php7.1-intl php-pear php-imagick php7.1-imap php7.1-mcrypt php-apcu php-memcache php7.1-pspell php7.1-recode php7.1-sqlite3 php7.1-tidy php7.1-xmlrpc php7.1-xsl php7.1-mbstring php-gettext
+sudo apt-get install php-fpm php-mysql php7.2-mysql php7.2-curl php7.2-gd php7.2-intl php-pear php-imagick php7.2-imap php7.2-mcrypt php-apcu php-memcache php7.2-pspell php7.2-recode php7.2-sqlite3 php7.2-tidy php7.2-xmlrpc php7.2-xsl php7.2-mbstring php-gettext
 ```
 
-Now we're going to make a simple change to the **/etc/php/7.1/fpm/php.ini** file. This is a security related change, so be sure to do it.
+Now we're going to make a simple change to the **/etc/php/7.2/fpm/php.ini** file. This is a security related change, so be sure to do it.
 ```
-sudo nano /etc/php/7.1/fpm/php.ini
+sudo nano /etc/php/7.2/fpm/php.ini
 ```
 
 Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
@@ -161,7 +163,7 @@ max_input_time = 400
 
 Then simply restart PHP and we're done.
 ```
-sudo service php7.1-fpm restart
+sudo service php7.2-fpm restart
 ```
 
 ### **MariaDB 10** 
@@ -220,7 +222,7 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 
 Then restart PHP and Nginx.
 ```
-sudo service nginx restart && sudo service php7.1-fpm restart
+sudo service nginx restart && sudo service php7.2-fpm restart
 ```
 
 ##### **Set Nginx Worker Processes**
@@ -304,7 +306,7 @@ Here we're going to generate a self-signed SSL certificate. Since we're using Cl
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
 cd /etc/nginx/ssl
 openssl dhparam -out yourdomain.com.pem 2048
-sudo service nginx restart && sudo service php7.1-fpm restart
+sudo service nginx restart && sudo service php7.2-fpm restart
 ```
 
 ----------
