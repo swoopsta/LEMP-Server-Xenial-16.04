@@ -3,6 +3,8 @@
 
 This step by step tutorial takes you through an advanced LEMP stack install for hosting WordPress sites. Building a server using Nginx, PHP 7, and MariaDB makes WordPress run faster than other options, so configuring a setup like this will usually get you the most bang for your hosting buck. We'll be utilizing FastCGI Cache, a webserver method of file caching which is built right into Nginx. By using FastCGI Cache, instead of WordPress caching plugins like W3 Total Cache or WP Super Cache, we're moving the job of caching pages to Nginx instead of PHP. This results in a faster site that can handle larger spikes in traffic. We'll also be self-signing an SSL certificate on the server-side since we're going to be using a free SSL certificate issued by CloudFlare.
 
+If you have a preferred method of handling your SSL certificate that differs from ours, you'll need to go off-script a bit from the tutorial below. However, we feel as if using CloudFlare's free SSL certificate is the easiest and cheapest way to accomplish end-to-end encryption for users that are new to the VPS world. In addition, CloudFlare itself is a great service that has benefits for even free-tier users.
+
 ----------
 
 ### **Basics**
@@ -20,7 +22,7 @@ sudo rm -rf /var/lib/mysql
 sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
 ##### **Changing SSH Port**
-We like to add a tiny bit of extra security by changing the default SSH port. This is not a replacement for a firewall.
+If you're running a fresh VPS, it's a good idea to harden it against potential attacks. We like to add a tiny bit of extra security as a first step in that proces by changing the default SSH port from 22. This is not a replacement for a firewall or fail2ban, and is absolutely not the only thing you'll want to do to protect your server. Anything further is beyond the scope of this tutorial, so you'll need to do your own research on this topic.
 
 Change port 22 to whatever number you'd like.
 ```
@@ -31,16 +33,18 @@ service ssh restart
 ----------
 
 ### **Nginx**
-We prefer using the **Mainline** version of Nginx instead of the **Stable** version. Mainline tends to have improved bleeding edge feature support, but this can lead to some instability. If you want Stable, change the version in the code below to whatever the latest Stable release is. We're going to be compiling Nginx from source since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
+We prefer using the **Mainline** version of Nginx instead of the **Stable** version. Mainline tends to have improved bleeding edge feature support, but this can lead to some instability. If you want Stable, change the version in the code below to whatever the latest Stable release is. 
+
+We're going to be compiling Nginx from source since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
 
 ##### **Downloading Nginx**
-First we'll need to download the latest versions of Nginx and the various modules we're using.
+First we'll need to download the latest versions of Nginx and the various Nginx modules we're using.
 You'll want to check their sites to ensure you're downloading the latest version.
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
 ```
 cd /usr/src/
-wget http://nginx.org/download/nginx-1.13.8.tar.gz
-tar -xzvf nginx-1.13.8.tar.gz
+wget http://nginx.org/download/nginx-1.13.9.tar.gz
+tar -xzvf nginx-1.13.9.tar.gz
 wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz
 tar -xzf v0.33.tar.gz
 wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
@@ -65,7 +69,7 @@ git submodule update --init --recursive
 ##### **Installing Nginx**
 Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that difer from the versions we had listed above, don't forget to change the OpenSSL, Nginx Cache Purge, and Nginx More Headers module versions inside of the `./configure` command below. 
 ```
-cd /usr/src/nginx-1.13.8
+cd /usr/src/nginx-1.13.9
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0g --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 make
 sudo checkinstall
