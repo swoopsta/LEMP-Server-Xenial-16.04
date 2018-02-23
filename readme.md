@@ -145,12 +145,12 @@ In the future, you can restart Nginx by typing `sudo service nginx restart`.
 ### **PHP 7**
 With Nginx out of the way, it's time to install PHP 7. Find the latest release of PHP 7 at http://php.net/downloads.php
 ```
-sudo apt-get install php-fpm php-mysql php7.2-mysql php7.2-curl php7.2-gd php7.2-intl php-pear php-imagick php7.2-imap php7.2-mcrypt php-apcu php-memcache php7.2-pspell php7.2-recode php7.2-sqlite3 php7.2-tidy php7.2-xmlrpc php7.2-xsl php7.2-mbstring php-gettext
+sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
 ```
 
-Now we're going to make a simple change to the **/etc/php/7.2/fpm/php.ini** file. This is a security related change, so be sure to do it.
+Now we're going to make a simple change to the **/etc/php/7.0/fpm/php.ini** file. This is a security related change, so be sure to do it.
 ```
-sudo nano /etc/php/7.2/fpm/php.ini
+sudo nano /etc/php/7.0/fpm/php.ini
 ```
 
 Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
@@ -167,7 +167,7 @@ max_input_time = 400
 
 Then simply restart PHP and we're done.
 ```
-sudo service php7.2-fpm restart
+sudo service php7.0-fpm restart
 ```
 
 ### **MariaDB 10** 
@@ -226,7 +226,7 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 
 Then restart PHP and Nginx.
 ```
-sudo service nginx restart && sudo service php7.2-fpm restart
+sudo service nginx restart && sudo service php7.0-fpm restart
 ```
 
 ##### **Set Nginx Worker Processes**
@@ -310,7 +310,7 @@ Here we're going to generate a self-signed SSL certificate. Since we're using Cl
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
 cd /etc/nginx/ssl
 openssl dhparam -out yourdomain.com.pem 2048
-sudo service nginx restart && sudo service php7.2-fpm restart
+sudo service nginx restart && sudo service php7.0-fpm restart
 ```
 
 ----------
