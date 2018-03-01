@@ -224,16 +224,16 @@ You'll also want to move [default.conf](https://raw.githubusercontent.com/VisiSt
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/default.conf -O /etc/nginx/conf.d/default.conf
 ```
 
-Then restart PHP and Nginx.
-```
-sudo service nginx restart && sudo service php7.0-fpm restart
-```
-
 ##### **Set Nginx Worker Processes**
-Set worker processes to the number of CPUs you have available. We can find this information by using the `grep -c processor /proc/cpuinfo` command and editing the **[nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf)** file. Enter whatever value `grep -c processor /proc/cpuinfo` lists.
+Set `worker_processes` to the number of CPUs you have available. We can find this information by using the `grep -c processor /proc/cpuinfo` command and editing the **[nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf)** file. Enter whatever value `grep -c processor /proc/cpuinfo` lists.
 ```
 grep -c processor /proc/cpuinfo
 sudo nano /etc/nginx/nginx.conf
+```
+
+Then restart PHP and Nginx.
+```
+sudo service nginx restart && sudo service php7.0-fpm restart
 ```
 
 #### **Get Your PHP Installation Info** 
