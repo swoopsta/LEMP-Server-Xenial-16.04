@@ -157,8 +157,8 @@ Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The
 
 You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside **php.ini** as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
 ```
-upload_max_filesize = 32M
-post_max_size = 48M
+upload_max_filesize = 60M
+post_max_size = 60M
 memory_limit = 196M
 max_execution_time = 600
 max_input_vars = 10000
