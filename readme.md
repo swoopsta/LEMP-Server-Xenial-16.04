@@ -10,23 +10,23 @@ If you have a preferred method of handling your SSL certificate that differs fro
 ### **Basics**
 ##### **Initial Setup**
 ```
-sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
-sudo apt-get install autotools-dev build-essential checkinstall curl debhelper dh-systemd gcc git htop libbz2-dev libexpat-dev libgd2-noxpm-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libluajit-5.1-dev libmhash-dev libpam0g-dev libpcre3 libpcre3-dev libperl-dev libssl-dev libxslt1-dev make nano openssl po-debconf software-properties-common sudo tar unzip wget zlib1g zlib1g-dbg zlib1g-dev -y
+sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y
+sudo apt install autotools-dev build-essential checkinstall curl debhelper dh-systemd gcc git htop libbz2-dev libexpat-dev libgd2-noxpm-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libluajit-5.1-dev libmhash-dev libpam0g-dev libpcre3 libpcre3-dev libperl-dev libssl-dev libxslt1-dev make nano openssl po-debconf software-properties-common sudo tar unzip wget zlib1g zlib1g-dbg zlib1g-dev -y
 sudo locale-gen en_US.UTF-8
-export LANG=en_US.UTF-8
+sudo export LANG=en_US.UTF-8
 ```
 ##### **Removing Stuff We Don't Need**
 ```
-sudo apt-get remove --purge mysql-server mysql-client mysql-common apache2* php5* nginx -y
+sudo apt remove --purge mysql-server mysql-client mysql-common apache2* php5* nginx -y
 sudo rm -rf /var/lib/mysql
-sudo apt-get autoremove -y && sudo apt-get autoclean -y
+sudo apt autoremove -y && sudo apt autoclean -y
 ```
 ##### **Changing SSH Port**
 If you're running a fresh VPS, it's a good idea to harden it against potential attacks. We like to add a tiny bit of extra security as a first step in that proces by changing the default SSH port from 22. This is not a replacement for a firewall or fail2ban, and is absolutely not the only thing you'll want to do to protect your server. Anything further is beyond the scope of this tutorial, so you'll need to do your own research on this topic.
 
 Change port 22 to whatever number you'd like.
 ```
-nano /etc/ssh/sshd_config
+sudo nano /etc/ssh/sshd_config
 service ssh restart
 ```
 
@@ -42,15 +42,13 @@ First we'll need to download the latest versions of Nginx and the various Nginx 
 You'll want to check their sites to ensure you're downloading the latest version.
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
 ```
-cd /usr/src/
-wget http://nginx.org/download/nginx-1.13.9.tar.gz
-tar -xzvf nginx-1.13.9.tar.gz
-wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz
-tar -xzf v0.33.tar.gz
-wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
-tar -xzf ngx_cache_purge-2.3.tar.gz
-wget https://www.openssl.org/source/openssl-1.1.0g.tar.gz
-tar -xzf openssl-1.1.0g.tar.gz
+sudo cd /usr/src/
+sudo wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz
+sudo tar -xzf v0.33.tar.gz
+sudo wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
+sudo tar -xzf ngx_cache_purge-2.3.tar.gz
+sudo wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz
+sudo tar -xzf openssl-1.1.0h.tar.gz
 ```
 
 ##### **Brotli Compression** 
@@ -60,18 +58,17 @@ You can read more about Brotli at [https://github.com/google/brotli](https://git
 
 First, if you're using this guide to update an exisiting installation to 
 ```
-cd /usr/src
-git clone https://github.com/google/ngx_brotli.git
-cd ngx_brotli
-git submodule update --init --recursive
+sudo cd /usr/src
+sudo git clone https://github.com/google/ngx_brotli.git
+sudo cd ngx_brotli
+sudo git submodule update --init --recursive
 ```
 
 ##### **Installing Nginx**
 Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that differ from the versions we had listed above, don't forget to change the OpenSSL, Nginx Cache Purge, and Nginx More Headers module versions inside of the `./configure` command below. 
 ```
-cd /usr/src/nginx-1.13.9
-./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0g --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
-make
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0h --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
+sudo make
 sudo checkinstall
 ```
 
@@ -143,31 +140,49 @@ In the future, you can restart Nginx by typing `sudo service nginx restart`.
 ----------
 
 ### **PHP 7**
-With Nginx out of the way, it's time to install PHP 7. Find the latest release of PHP 7 at http://php.net/downloads.php
+With Nginx out of the way, it's time to install PHP 7.2. We're going to be using Ondřej Surý's repository for this, as the official Ubuntu repository does not have what we're looking for. 
 ```
-sudo apt-get install php-fpm php-mysql php7.0-mysql php7.0-curl php7.0-gd php7.0-intl php-pear php-imagick php7.0-imap php7.0-mcrypt php-apcu php-memcache php7.0-pspell php7.0-recode php7.0-sqlite3 php7.0-tidy php7.0-xmlrpc php7.0-xsl php7.0-mbstring php-gettext
-```
-
-Now we're going to make a simple change to the **/etc/php/7.0/fpm/php.ini** file. This is a security related change, so be sure to do it.
-```
-sudo nano /etc/php/7.0/fpm/php.ini
+sudoadd-apt-repository ppa:ondrej/php
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
+sudo apt update && sudo apt upgrade
+sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-gd php-geoip php-imagick php7.2-intl php7.2-json php7.2-mbstring php7.2-mysql php7.2-opcache php-pear php7.2-pspell php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip
 ```
 
-Now find the entry for `cgi.fix_pathinfo`. Change the value from `0` to `1`. The line should read `cgi.fix_pathinfo=1`.
+##### **Configuring PHP.ini** 
 
-You may want to make some additional performance changes to PHP based on your server. If you want to change things such as how much memory is available to WordPress or how large of a file you can upload, you'll need to make these changes inside **php.ini** as well. Below are some changes that may be of use to you. Each server is different, so you'll want to alter these values based on your site's needs.
+Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256` is a pretty safe value.
 ```
-upload_max_filesize = 60M
-post_max_size = 60M
-memory_limit = 196M
-max_execution_time = 600
+sudo nano /etc/php/7.2/fpm/php.ini
+```
+
+Now locate the settings below and change their values to reflect the higher values listed. You may need to adjust the values for your specific site.
+```
+upload_max_filesize = 32M
+post_max_size = 32M
+memory_limit = 256M
+max_execution_time = 120
 max_input_vars = 10000
-max_input_time = 400
+max_input_time = 120
+```
+Keep **php.ini open since we'll still need it in the next section below.
+
+##### **OPcache** 
+We're going to utilize OPcache to greatly increase the performance of PHP. Since OPcache stores scripts in memory, however, the needs of your site could greatly differ from the next person's site. To learn more about tuning OPCache for your specific needs, read: [Fine-Tune Your Opcache Configuration to Avoid Caching Suprises](https://tideways.io/profiler/blog/fine-tune-your-opcache-configuration-to-avoid-caching-suprises). You can read up on every available OPcache setting by visiting [PHP.net](http://php.net/manual/en/opcache.configuration.php.)
+
+Still edting **php.ini**, look for the lines below. Please note that you will need to uncomment them by removing the `;` from the front before they will be active.
+```
+opcache.enable=1
+opcache.enable_cli=1
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=10000
+opcache.memory_consumption=128
+opcache.revalidate_freq=300
+opcache.save_comments=0
 ```
 
 Then simply restart PHP and we're done.
 ```
-sudo service php7.0-fpm restart
+sudo service php7.2-fpm restart
 ```
 
 ### **MariaDB 10** 
@@ -184,18 +199,18 @@ sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digit
 ##### **Installing MariaDB** 
 At the end of this installation, MariaDB will ask you to set your password, don't lose this!
 ```	
-sudo apt-get update && apt-get install mariadb-server -y
+sudo apt update && apt install mariadb-server -y
 ```
 
 Make sure that MariaDB has upgraded to the latest release by running this again.
 ```
-sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
+sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y
 ```
 
 ##### **Securing MariaDB** 
 MariaDB includes some test users and databases that we don't want to be using in a live production environment. Now that MariaDB is installed, run this command. Since we've already set the admin password, we can hit `N` to the first option. You'll want to hit `Y` to the rest of the questions.
 ```
-mysql_secure_installation
+sudo mysql_secure_installation
 ```
 
 ##### **Log in to MariaDB** 
@@ -227,13 +242,13 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 ##### **Set Nginx Worker Processes**
 Set `worker_processes` to the number of CPUs you have available. We can find this information by using the `grep -c processor /proc/cpuinfo` command and editing the **[nginx.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/nginx.conf)** file. Enter whatever value `grep -c processor /proc/cpuinfo` lists.
 ```
-grep -c processor /proc/cpuinfo
+sudo grep -c processor /proc/cpuinfo
 sudo nano /etc/nginx/nginx.conf
 ```
 
 Then restart PHP and Nginx.
 ```
-sudo service nginx restart && sudo service php7.0-fpm restart
+sudo service nginx restart && sudo service php7.2-fpm restart
 ```
 
 #### **Get Your PHP Installation Info** 
@@ -249,7 +264,7 @@ Point your browser to http://ipa.ddr.ess/phpinfo.php.
 ### **phpMyAdmin**
 Since phpMyAdmin is already available through the default Ubuntu 16.04 repos, this part is really easy. We're pointing our phpMyAdmin location to **/var/www/html**, which will make it available at your server's IP address. Alter the lines below to reflect a different location, such as a behind a domain.
 ```
-sudo apt-get install phpmyadmin -y
+sudo apt install phpmyadmin -y
 sudo update-rc.d -f apache2 remove
 sudo ln -s /usr/share/phpmyadmin /var/www/html
 ```
@@ -264,7 +279,7 @@ From this point on in the tutorial, any time you see `yourdomain.com` you'll wan
 ##### **Creating a MySQL Database** 
 We're going to create the database by command line because we're cool. You can also do this directly though phpMyAdmin if you're not as cool. Replace the `database`, `user`, and `password` variables in the code below.
 ```
-mysql -u root -p
+sudo mysql -u root -p
 CREATE DATABASE database;
 CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON database.* TO 'user'@'localhost';
@@ -276,11 +291,11 @@ exit
 We're going to create a few directories needed for WordPress, set the permissions, and download WordPress. We're also going to just remove the Hello Dolly plugin, because obviously.
 ```
 sudo mkdir -p /var/www/yourdomain.com/html						
-cd /var/www/yourdomain.com/html
-wget http://wordpress.org/latest.tar.gz
-tar -xzvf latest.tar.gz
-mv wordpress/* .
-rmdir /var/www/yourdomain.com/html/wordpress
+sudo cd /var/www/yourdomain.com/html
+sudo wget http://wordpress.org/latest.tar.gz
+sudo tar -xzvf latest.tar.gz
+sudo mv wordpress/* .
+sudo rmdir /var/www/yourdomain.com/html/wordpress
 sudo rm -f /var/www/yourdomain.com/html/wp-content/plugins/hello.php
 sudo mkdir -p /var/www/yourdomain.com/html/wp-content/uploads
 ```
@@ -289,8 +304,8 @@ If you're transfering a site over, it's time to upload any files you might have 
 ##### **Secure WordPress** 
 Once you're done uploading files, we'll want to secure WordPress' directory and file permissions.
 ```
-find /var/www/yourdomain.com/html/ -type d -exec chmod 755 {} \;
-find /var/www/yourdomain.com/html/ -type f -exec chmod 644 {} \;
+sudo find /var/www/yourdomain.com/html/ -type d -exec chmod 755 {} \;
+sudo find /var/www/yourdomain.com/html/ -type f -exec chmod 644 {} \;
 sudo chown -hR www-data:www-data /var/www/yourdomain.com/html/
 ```
 
@@ -308,9 +323,9 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
 ```
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
-cd /etc/nginx/ssl
-openssl dhparam -out yourdomain.com.pem 2048
-sudo service nginx restart && sudo service php7.0-fpm restart
+sudo cd /etc/nginx/ssl
+sudo openssl dhparam -out yourdomain.com.pem 2048
+sudo service nginx restart && sudo service php7.2-fpm restart
 ```
 
 ----------
