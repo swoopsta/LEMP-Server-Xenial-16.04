@@ -153,7 +153,7 @@ sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-g
 
 ##### **Configuring PHP.ini** 
 
-Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256` is a very safe value.
+Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256M` is a very safe value.
 ```
 sudo nano /etc/php/7.2/fpm/php.ini
 ```
