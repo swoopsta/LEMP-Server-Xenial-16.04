@@ -145,7 +145,7 @@ In the future, you can restart Nginx by typing `sudo service nginx restart`.
 ### **PHP 7**
 With Nginx out of the way, it's time to install PHP 7.2. We're going to be using Ondřej Surý's repository for this, as the official Ubuntu repository does not have what we're looking for. 
 ```
-sudoadd-apt-repository ppa:ondrej/php
+sudo add-apt-repository ppa:ondrej/php
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 sudo apt update && sudo apt upgrade
 sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-gd php-geoip php-imagick php7.2-intl php7.2-json php7.2-mbstring php7.2-mysql php7.2-opcache php-pear php7.2-pspell php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip
@@ -153,7 +153,7 @@ sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-g
 
 ##### **Configuring PHP.ini** 
 
-Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256` is a pretty safe value.
+Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256` is a very safe value.
 ```
 sudo nano /etc/php/7.2/fpm/php.ini
 ```
@@ -167,20 +167,20 @@ max_execution_time = 120
 max_input_vars = 10000
 max_input_time = 120
 ```
-Keep **php.ini open since we'll still need it in the next section below.
+Keep **php.ini** open since we'll still need it in the next section below.
 
 ##### **OPcache** 
-We're going to utilize OPcache to greatly increase the performance of PHP. Since OPcache stores scripts in memory, however, the needs of your site could greatly differ from the next person's site. To learn more about tuning OPCache for your specific needs, read: [Fine-Tune Your Opcache Configuration to Avoid Caching Suprises](https://tideways.io/profiler/blog/fine-tune-your-opcache-configuration-to-avoid-caching-suprises). You can read up on every available OPcache setting by visiting [PHP.net](http://php.net/manual/en/opcache.configuration.php.)
+We're going to utilize OPcache to greatly increase the performance of PHP. Since OPcache stores scripts in memory, however, the needs of your site could greatly differ from the next person's site. To learn more about tuning OPCache for your specific needs, read [Fine-Tune Your Opcache Configuration to Avoid Caching Suprises](https://tideways.io/profiler/blog/fine-tune-your-opcache-configuration-to-avoid-caching-suprises). You can more learn about every available OPcache setting by visiting [PHP.net](http://php.net/manual/en/opcache.configuration.php.)
 
 Still edting **php.ini**, look for the lines below. Please note that you will need to uncomment them by removing the `;` from the front before they will be active.
 ```
-opcache.enable=1
-opcache.enable_cli=1
-opcache.interned_strings_buffer=16
-opcache.max_accelerated_files=10000
-opcache.memory_consumption=128
-opcache.revalidate_freq=300
-opcache.save_comments=0
+opcache.enable = 1
+opcache.enable_cli = 1
+opcache.interned_strings_buffer = 16
+opcache.max_accelerated_files = 10000
+opcache.memory_consumption = 128
+opcache.revalidate_freq = 300
+opcache.save_comments = 0
 ```
 
 Then simply restart PHP and we're done.
@@ -188,10 +188,10 @@ Then simply restart PHP and we're done.
 sudo service php7.2-fpm restart
 ```
 
+----------
+
 ### **MariaDB 10** 
 We're using MariaDB instead of MySQL, as the performance is great with WordPress. We're running the **Stable** release of MariaDB. You can find the latest version at [https://downloads.mariadb.org/](https://downloads.mariadb.org/).
-
-----------
 
 ##### **Add MariaDB Repo** 
 ```
