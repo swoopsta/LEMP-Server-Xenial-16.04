@@ -56,7 +56,7 @@ sudo tar -xzf openssl-1.1.0h.tar.gz
 ##### **Brotli Compression** 
 We're adding in support for Brotli compression. Brotli is Google's new lossless compression format. Brotli will take priority over gzip when enabled. Check to make sure your CDN actually works with Brotli, it may just normalize it to use gzip. If and when your CDN supports Brotli, your site will be ready to take advantage of this.
 
-You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli)
+You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli).
 
 Unfortunately Google isn't the best at keeping the official Nginx Brotli plugin as updated as needed. Instead we're going to be using a forked version that has more regular updates. If this changes in the future we'll adjust accordingly.
 ```
