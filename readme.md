@@ -1,9 +1,9 @@
 ## **LEMP Server on Ubuntu 16.04 Xenial**
 ### Nginx, PHP 7, MariaDB 10, FastCGI Cache, Brotli, HTTP2, and CloudFlare SSL
 
-This step by step tutorial takes you through an advanced LEMP stack install for hosting WordPress sites. Building a server using Nginx, PHP 7, and MariaDB makes WordPress run faster than other options, so configuring a setup like this will usually get you the most bang for your hosting buck. We'll be utilizing FastCGI Cache, a webserver method of file caching which is built right into Nginx. By using FastCGI Cache, instead of WordPress caching plugins like W3 Total Cache or WP Super Cache, we're moving the job of caching pages to Nginx instead of PHP. This results in a faster site that can handle larger spikes in traffic. We'll also be self-signing an SSL certificate on the server-side since we're going to be using a free SSL certificate issued by CloudFlare.
+This step by step tutorial takes you through an advanced LEMP stack install for hosting WordPress sites. Building a server using Nginx, PHP 7, and MariaDB makes WordPress run faster than other options, so configuring a setup like this will usually get you the most bang for your hosting buck. We'll be utilizing FastCGI Cache, a method of file caching which is built right into Nginx.
 
-If you have a preferred method of handling your SSL certificate that differs from ours, you'll need to go off-script a bit from the tutorial below. However, we feel as if using CloudFlare's free SSL certificate is the easiest and cheapest way to accomplish end-to-end encryption for users that are new to the VPS world. In addition, CloudFlare itself is a great service that has benefits for even free-tier users.
+We'll also be self-signing an SSL certificate on the server-side since we're going to be using a free SSL certificate issued by CloudFlare. If you have a preferred method of handling your SSL certificate that differs from ours, you'll need to go off-script a bit from the tutorial below. However, we feel as if using CloudFlare's free SSL certificate is the easiest and cheapest way to accomplish end-to-end encryption for users that are new to the VPS world. In addition, CloudFlare itself is a great service that has benefits for even free-tier users.
 
 ----------
 
@@ -27,7 +27,7 @@ If you're running a fresh VPS, it's a good idea to harden it against potential a
 Change port 22 to whatever number you'd like.
 ```
 sudo nano /etc/ssh/sshd_config
-service ssh restart
+sudo service ssh restart
 ```
 
 ----------
@@ -42,9 +42,9 @@ First we'll need to download the latest versions of Nginx and the various Nginx 
 You'll want to check their sites to ensure you're downloading the latest version.
 Get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
 ```
-sudo cd /usr/src/
-sudo wget http://nginx.org/download/nginx-1.13.12.tar.gz
-sudo tar -xzvf nginx-1.13.12.tar.gz
+cd /usr/src/
+sudo wget http://nginx.org/download/nginx-1.14.0.tar.gz
+sudo tar -xzvf nginx-1.14.0.tar.gz
 sudo wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz
 sudo tar -xzf v0.33.tar.gz
 sudo wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
@@ -58,19 +58,19 @@ We're adding in support for Brotli compression. Brotli is Google's new lossless 
 
 You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli)
 
-First, if you're using this guide to update an exisiting installation to 
+Unfortunately Google isn't the best at keeping the official Nginx Brotli plugin as updated as needed. Instead we're going to be using a forked version that has more regular updates. If this changes in the future we'll adjust accordingly.
 ```
-sudo cd /usr/src
-sudo git clone https://github.com/google/ngx_brotli.git
-sudo cd ngx_brotli
+cd /usr/src
+sudo git clone https://github.com/eustas/ngx_brotli.git
+cd ngx_brotli
 sudo git submodule update --init --recursive
 ```
 
 ##### **Installing Nginx**
 Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that differ from the versions we had listed above, don't forget to change the OpenSSL, Nginx Cache Purge, and Nginx More Headers module versions inside of the `./configure` command below. 
 ```
-sudo cd /usr/src/nginx-1.13.12
-./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0h --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_flv_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
+cd /usr/src/nginx-1.14.0
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --without-mail_pop3_module --with-openssl=/usr/src/openssl-1.1.0h --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_scgi_module --without-http_memcached_module --with-http_ssl_module --with-http_stub_status_module --with-http_v2_module --with-debug --with-pcre-jit --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --with-stream --with-stream_ssl_module --with-threads --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 sudo make
 sudo checkinstall
 ```
@@ -202,7 +202,7 @@ sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digit
 ##### **Installing MariaDB** 
 At the end of this installation, MariaDB will ask you to set your password, don't lose this!
 ```	
-sudo apt update && apt install mariadb-server -y
+sudo apt update && sudo apt install mariadb-server -y
 ```
 
 Make sure that MariaDB has upgraded to the latest release by running this again.
@@ -294,7 +294,7 @@ exit
 We're going to create a few directories needed for WordPress, set the permissions, and download WordPress. We're also going to just remove the Hello Dolly plugin, because obviously.
 ```
 sudo mkdir -p /var/www/yourdomain.com/html						
-sudo cd /var/www/yourdomain.com/html
+cd /var/www/yourdomain.com/html
 sudo wget http://wordpress.org/latest.tar.gz
 sudo tar -xzvf latest.tar.gz
 sudo mv wordpress/* .
@@ -326,7 +326,7 @@ sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/
 Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
 ```
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
-sudo cd /etc/nginx/ssl
+cd /etc/nginx/ssl
 sudo openssl dhparam -out yourdomain.com.pem 2048
 sudo service nginx restart && sudo service php7.2-fpm restart
 ```
@@ -366,30 +366,7 @@ We've told Nginx skip caching a page if it matches a set of criteria. For exampl
 
 ----------
 
-### **Optional Stuff** 
-##### **WooCommerce and FastCGI Cache** 
-We really don't want Nginx to cache anything related to WooCommerce, as this could result in a customer's information being fed to others. So we're going to tackle this two different ways. Our [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) has the code commented out by default, as not everyone will be running woocommerce on their site.
-
-The first method of preventing WooCommerce caching has Nginx looking for default WooCommerce pages such as Shop, Cart, or Checkout. If you've altered the names of the default WooCommerce pages, you'll also need to make those changes inside this file otherwise they will be cached.
-	
-The second method avoids caching by looking to see if a WooCommerce session cookie has been set. If the user has interacted with a WooCommerce page on your site, this cookie will set and caching will be disabled for that user.
-
-Find the code below and uncomment it to enable both methods.
-```
-#if ($request_uri ~* "/shop.*|/cart.*|/my-account.*|/checkout.*|/addons.*") {
-#		set $no_cache 1;
-#	}
- 
-# If WooCommerce cookie is set, do not cache.
-#if ($http_cookie ~* "wp_woocommerce_session_[^=]*=([^%]+)%7C") {        
-#		set $no_cache 1;
-#	}
-```
-    
-If you're still caching stuff during WooCommerce sessions, there is a third method inside the file that avoids caching if an item is in the cart. It's almost never needed, but we're just making you aware that it's in there.
-
 ### **Done!** 
-
 *Naturally, this tutorial is always subject to change, and could include mistakes or vulnerabilities that might result in damage to your site by malicious parties. We make no guarantee of the performance, and encourage you to read and thoroughly understand each setting and command before you enable it on a live production site.*
 
 If we've helped you, or you've given up and want to hire a consultant to set this up for you, visit us at **[VisiStruct.com](https://VisiStruct.com "VisiStruct.com")**.
