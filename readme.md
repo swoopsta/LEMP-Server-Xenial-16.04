@@ -13,7 +13,7 @@ We'll also be self-signing an SSL certificate on the server-side since we're goi
 sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y
 sudo apt install autotools-dev build-essential checkinstall curl debhelper dh-systemd gcc git htop libbz2-dev libexpat-dev libgd2-noxpm-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libluajit-5.1-dev libmhash-dev libpam0g-dev libpcre3 libpcre3-dev libperl-dev libssl-dev libxslt1-dev make nano openssl po-debconf software-properties-common sudo tar unzip wget zlib1g zlib1g-dbg zlib1g-dev -y
 sudo locale-gen en_US.UTF-8
-sudo export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 ```
 ##### **Removing Stuff We Don't Need**
 ```
@@ -148,7 +148,9 @@ With Nginx out of the way, it's time to install PHP 7.2. We're going to be using
 sudo add-apt-repository ppa:ondrej/php
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 sudo apt update && sudo apt upgrade
-sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-gd php-geoip php-imagick php7.2-intl php7.2-json php7.2-mbstring php7.2-mysql php7.2-opcache php-pear php7.2-pspell php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip
+sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-gd php-imagick php7.2-intl php7.2-json php7.2-mbstring php7.2-mysql php7.2-opcache php-pear php7.2-readline php7.2-soap php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip
+
+
 ```
 
 ##### **Configuring PHP.ini** 
