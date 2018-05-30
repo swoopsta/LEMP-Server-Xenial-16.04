@@ -78,18 +78,16 @@ Since we're compiling Nginx from source, we're going to be taking advantage of t
 
 ```
 cd /usr/src/nginx-1.14.0
-./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-pcre-jit --without-empty_gif_module--without-http_memcached_module --without-http_scgi_module --without-http_uwsgi_module --without-mail_imap_module --without-mail_pop3_module --without-mail_smtp_module --with-pcre=/usr/src/zlib-1.2.11--with-zlib=/usr/src/pcre-8.42--with-openssl=/usr/src/openssl-1.1.0h --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-pcre-jit --without-http_empty_gif_module --without-http_memcached_module --without-http_scgi_module --without-http_uwsgi_module --without-mail_imap_module --without-mail_pop3_module --without-mail_smtp_module --with-pcre=/usr/src/pcre-8.42 --with-zlib=/usr/src/zlib-1.2.11 --with-openssl=/usr/src/openssl-1.1.0h --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 sudo make
 sudo checkinstall
 ```
 Using the checkinstall command tells the server to package our compiled source into a more easily managed .deb package file. Moving through the prompts, you can tell it not to list the installation files, and yes to exclude them from the package. Since Nginx updates quite frequently, doing this allows us to easily upgrade later on. To upgrade to the latest version, double check Nginx and module versions (as this guide may not be up to date), then simply repeat the installation process above. Restart Nginx and you should be running the latest version.
 
-Once again, get the latest versions at: [Nginx](http://nginx.org/en/download.html), [OpenSSL](https://www.openssl.org/source/), [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags), and [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/).
-
-Double check that we've got everything installed correctly by using the `nginx -Vv` command. This will also list all installed modules, and your OpenSSL version.
+Double check that we've got everything installed correctly by using the `nginx -Vv` command. This will also list all installed modules and your OpenSSL version.
 
 ##### **Creating Directories and Setting Permissions** 
-Here we're going to ensure that the right folders are in place for our config.
+Here we're going to ensure that the right folders are in place for our config. 
 ```
 sudo mkdir -p /var/www/html
 sudo mkdir -p /var/lib/nginx/fastcgi
