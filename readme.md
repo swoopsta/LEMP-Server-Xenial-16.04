@@ -53,7 +53,7 @@ sudo wget http://nginx.org/download/nginx-1.14.0.tar.gz && sudo tar -xzvf nginx-
 sudo wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && sudo tar -xzf v0.33.tar.gz
 sudo wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz && sudo tar -xzf ngx_cache_purge-2.3.tar.gz
 sudo wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && sudo tar -xzf openssl-1.1.0h.tar.gz
-sudo wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && sudo tar xzvf pcre-8.40.tar.gz
+sudo wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz && sudo tar xzvf pcre-8.42.tar.gz
 sudo wget http://www.zlib.net/zlib-1.2.11.tar.gz && sudo tar xzvf zlib-1.2.11.tar.gz
 ```
 ##### **Brotli Compression** 
