@@ -41,12 +41,12 @@ First, we'll need to download the latest versions of Nginx and the various Nginx
 Before going any further, you'll want to check their sites to ensure you're downloading the latest version. Don't trust that the versions you see below are the latest releases. 
 
 Nginx Server Software:
-* Nginx - [View](http://nginx.org/en/download.html)
-* OpenSSL - [View](https://www.openssl.org/source/)
-* Headers More Module - [View](https://github.com/openresty/headers-more-nginx-module/tags)
-* Nginx Cache Purge Module - [View](http://labs.frickle.com/nginx_ngx_cache_purge/).
-* PCRE - [View](https://ftp.pcre.org/pub/pcre/).
-* zlib - [View](https://www.zlib.net//).
+* [Nginx](http://nginx.org/en/download.html)
+* [OpenSSL](https://www.openssl.org/source/)
+* [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags)
+* [Nginx Cache Purge Module](http://labs.frickle.com/nginx_ngx_cache_purge/)
+* [PCRE](https://ftp.pcre.org/pub/pcre/)
+* [zlib](https://www.zlib.net/)
 ```
 cd /usr/src/
 sudo wget http://nginx.org/download/nginx-1.14.0.tar.gz && sudo tar -xzvf nginx-1.14.0.tar.gz
@@ -73,8 +73,8 @@ Now it's time to compile Nginx using the parts we've downloaded. If you're runni
 
 Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included direct to the lists of which modules are and aren't built by default. If you need something else for a specific use, alter the code below before continuing on. 
 
-* Nginx Default Modules - [View](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
-* Nginx Modules Not Built by Default - [View](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
+* [Nginx Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
+* [Nginx Modules Not Built by Default](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
 
 ```
 cd /usr/src/nginx-1.14.0
