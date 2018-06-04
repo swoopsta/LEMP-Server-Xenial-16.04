@@ -358,6 +358,7 @@ We've told Nginx skip caching a page if it matches a set of criteria. For exampl
 The common theme when designing this server config is *complex simplicity*. Throughout the build, we've utilized cool, performance enhancing features like OPcache and Nginx FastCGI Cache, all while keeping things clean and running smoothly. However, we've intentionally left out some of the more complex Nginx performance features related to how it handles threads.
 
 If you're ready to take your Nginx performance to the next level, we'd highly recommend viewing [this guide on Nginx performance](https://www.nginx.com/blog/thread-pools-boost-performance-9x/). Happy reading!
+
 ----------
 
 ### **Done!**
