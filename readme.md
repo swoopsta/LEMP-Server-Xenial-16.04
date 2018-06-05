@@ -22,7 +22,7 @@ sudo rm -rf /var/lib/mysql
 sudo apt autoremove -y && sudo apt autoclean -y
 ```
 ##### **Changing SSH Port**
-If you're running a fresh VPS, it's a good idea to harden it against potential attacks. We like to add a tiny bit of extra security as a first step in that proces by changing the default SSH port from 22. This is not a replacement for a firewall or fail2ban, and is absolutely not the only thing you'll want to do to protect your server. Anything further is beyond the scope of this tutorial, so you'll need to do your own research on this topic.
+If you're running a fresh VPS, it's a good idea to harden it against potential attacks. We like to add a tiny bit of extra security as a first step in that process by changing the default SSH port from 22. This is not a replacement for a firewall or fail2ban, and is absolutely not the only thing you'll want to do to protect your server. Anything further is beyond the scope of this tutorial, so you'll need to do your own research on this topic.
 
 Change port 22 to whatever number you'd like.
 ```
@@ -40,7 +40,7 @@ We're going to be compiling Nginx from source since we want to run some custom m
 First, we'll need to download the latest versions of Nginx and the various Nginx modules we're using.
 Before going any further, you'll want to check their sites to ensure you're downloading the latest version. Don't trust that the versions you see below are the latest releases.
 
-Nginx Server Software:
+###### Nginx Server Software:
 * [Nginx](http://nginx.org/en/download.html)
 * [OpenSSL](https://www.openssl.org/source/)
 * [Headers More Module](https://github.com/openresty/headers-more-nginx-module/tags)
@@ -49,7 +49,7 @@ Nginx Server Software:
 * [zlib](https://www.zlib.net/)
 ```
 cd /usr/src/
-sudo wget http://nginx.org/download/nginx-1.14.0.tar.gz && sudo tar -xzvf nginx-1.14.0.tar.gz
+sudo wget http://nginx.org/download/nginx-1.15.0.tar.gz && sudo tar -xzvf nginx-1.15.0.tar.gz
 sudo wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && sudo tar -xzf v0.33.tar.gz
 sudo wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz && sudo tar -xzf ngx_cache_purge-2.3.tar.gz
 sudo wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && sudo tar -xzf openssl-1.1.0h.tar.gz
@@ -61,7 +61,7 @@ We're adding in support for Brotli compression. Brotli is Google's new lossless 
 
 You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli).
 
-Unfortunately Google isn't the best at keeping the official Nginx Brotli plugin as updated as needed. Instead we're going to be using a forked version that has more regular updates. If this changes in the future we'll adjust accordingly.
+Unfortunately, Google isn't the best at keeping the official Nginx Brotli plugin as updated as needed. Instead we're going to be using a forked version that has more regular updates. If this changes in the future we'll adjust accordingly.
 ```
 cd /usr/src
 sudo git clone https://github.com/eustas/ngx_brotli.git
@@ -73,12 +73,12 @@ Now it's time to compile Nginx using the parts we've downloaded. If you're runni
 
 Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included direct to the lists of which modules are and aren't built by default. If you need something else for a specific use, alter the code below before continuing on.
 
-Nginx Module Reference:
+###### Nginx Module Reference:
 * [Nginx Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
 * [Nginx Modules Not Built by Default](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
 
 ```
-cd /usr/src/nginx-1.14.0
+cd /usr/src/nginx-1.15.0
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-pcre-jit --without-http_empty_gif_module --without-http_memcached_module --without-http_scgi_module --without-http_uwsgi_module --without-mail_imap_module --without-mail_pop3_module --without-mail_smtp_module --with-pcre=/usr/src/pcre-8.42 --with-zlib=/usr/src/zlib-1.2.11 --with-openssl=/usr/src/openssl-1.1.0h --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 sudo make
 sudo checkinstall
@@ -157,11 +157,11 @@ sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-fpm php7.2-g
 ```
 ##### **Configuring PHP.ini**
 
-Now that PHP 7.2 is installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In adition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256M` is a very safe value.
+With PHP 7.2 installed, we'll want to make some changes to the **php.ini** configuration file. Our goal here is to raise the timeouts and max file sizes for the site. In addition, you'll want to pay close attention to the `memory_limit` setting and set it accordingly. If you're not sure, `256M` is a very safe value.
 ```
 sudo nano /etc/php/7.2/fpm/php.ini
 ```
-Now locate the settings below and change their values to reflect the higher values listed. You may need to adjust the values for your specific site.
+Locate the settings below and change their values to reflect the higher values listed. You may need to adjust the values for your specific site.
 ```
 upload_max_filesize = 32M
 post_max_size = 32M
@@ -175,7 +175,7 @@ Keep **php.ini** open since we'll still need it in the next section below.
 ##### **OPcache**
 We're going to utilize OPcache to greatly increase the performance of PHP. Since OPcache stores scripts in memory, however, the needs of your site could greatly differ from the next person's site. To learn more about tuning OPCache for your specific needs, read [Fine-Tune Your Opcache Configuration to Avoid Caching Suprises](https://tideways.io/profiler/blog/fine-tune-your-opcache-configuration-to-avoid-caching-suprises). You can more learn about every available OPcache setting by visiting [PHP.net](http://php.net/manual/en/opcache.configuration.php.)
 
-Still edting **php.ini**, look for the lines below. Please note that you will need to uncomment them by removing the `;` from the front before they will be active.
+Still editing **php.ini**, look for the lines below. Remember that you'll need to uncomment the lines by removing the `;`.
 ```
 opcache.enable = 1
 opcache.enable_cli = 1
@@ -185,7 +185,7 @@ opcache.memory_consumption = 128
 opcache.revalidate_freq = 300
 opcache.save_comments = 0
 ```
-Then simply restart PHP and we're done.
+Restart PHP and we're done.
 ```
 sudo service php7.2-fpm restart
 ```
@@ -200,7 +200,7 @@ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F2
 sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
 ```
 ##### **Installing MariaDB**
-At the end of this installation, MariaDB will ask you to set your password, don't lose this!
+At the end of this installation, MariaDB will ask you to set your password. Don't lose this!
 ```
 sudo apt update && sudo apt install mariadb-server -y
 ```
@@ -304,14 +304,15 @@ sudo chown -hR www-data:www-data /var/www/yourdomain.com/html/
 ##### **Install Nginx Site File**
 Now that we've got the directory structure of your domain squared away, we'll need to enable it in Nginx.
 
-Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host. Remember to change the `/etc/nginx/conf.d/yourdomain.com.conf` portion in the back to reflect your actual domain name.
+Add [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) to **/etc/nginx/conf.d**. This folder may hold as many virtual domains as you'd like, just make a new file with a different name for each domain you want to host. Once that is done, edit the contents of the file to change all instances of `yourdomain.com` to your actual domain name.
 ```
 sudo wget https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf -O /etc/nginx/conf.d/yourdomain.com.conf
+sudo nano /etc/nginx/conf.d/yourdomain.com.conf
 ```
 ----------
 
 ### **Self-Signed SSL Certificate**
-Here we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
+Now we're going to generate a self-signed SSL certificate. Since we're using CloudFlare anyway, we're going to use a *FREE* SSL certificate through them. You'll need to set CloudFlare's SSL certificate status to `Full` for this to work.
 ```
 sudo openssl req -x509 -nodes -days 365000 -newkey rsa:2048 -keyout /etc/nginx/ssl/yourdomain.com.key -out /etc/nginx/ssl/yourdomain.com.crt
 cd /etc/nginx/ssl
@@ -333,9 +334,9 @@ Download: [Nginx Helper](https://wordpress.org/plugins/nginx-helper/)
 ----------
 
 ### **Checking FastCGI Cache**
-It's always a good idea to make sure that what you think is working is in fact actually working. Since we don't want to serve cached versions of every page on the site, inside [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) we've added rules that prevent certain pagees from being cached. To help shed light on things a bit, we've added the line `add_header X-Cached $upstream_cache_status;`. This will tell us with certainty whether or not the page being served is the cached version.
+It's always a good idea to make sure that what you think is working is in fact actually working. Since we don't want to serve cached versions of every page on the site, inside [yourdomain.com.conf](https://raw.githubusercontent.com/VisiStruct/LEMP-Server-Xenial-16.04/master/conf.d/yourdomain.com.conf) we've added rules that prevent certain pages from being cached. To help shed light on things a bit, we've added the line `add_header X-Cached $upstream_cache_status;`. This will tell us with certainty whether or not the page being served is the cached version.
 
-We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Extensions exist for FireFox and Chrome that will make things a bit easier. We prefer the [HTTP Headers](https://chrome.google.com/webstore/detail/http-headers/nioieekamcpjfleokdcdifpmclkohddp "HTTP Headers for Google Chrome") Chrome extension.
+We can check the status of any page by viewing the headers that are sent along when you visit it. To do this, you can use a variety of methods. You can use the `CURL` command inside your terminal by typing `curl -I https://yourdomain.com`. Extensions exist for Firefox and Chrome that will make things a bit easier. We prefer the [HTTP Headers](https://chrome.google.com/webstore/detail/http-headers/nioieekamcpjfleokdcdifpmclkohddp "HTTP Headers for Google Chrome") Chrome extension.
 
 You'll encounter 4 different messages based on the cache type. `X-Cached: HIT`, `X-Cached: MISS`, `X-Cached: EXPIRED`, or `X-Cached: BYPASS`.
 
