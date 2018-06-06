@@ -197,7 +197,7 @@ We're using MariaDB instead of MySQL, as the performance is great with WordPress
 ##### **Add MariaDB Repo**
 ```
 sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
+sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu xenial main'
 ```
 ##### **Installing MariaDB**
 At the end of this installation, MariaDB will ask you to set your password. Don't lose this!
