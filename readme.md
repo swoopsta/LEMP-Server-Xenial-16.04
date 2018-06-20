@@ -61,7 +61,7 @@ We're adding in support for Brotli compression. Brotli is Google's new lossless 
 
 You can read more about Brotli at [https://github.com/google/brotli](https://github.com/google/brotli).
 
-Unfortunately, Google has abandoned the official Nginx Brotli module. Instead we're going to be using a forked version maintained by [Eugene Kliuchnikov](https://github.com/eustas/ngx_brotli) that has more regular updates and still works with the latest builds of Nginx.
+Unfortunately, Google has abandoned the official Nginx Brotli module. Instead we're going to be using a [forked version](https://github.com/eustas/ngx_brotli) maintained by Eugene Kliuchnikov that has more regular updates and still works with the latest builds of Nginx.
 ```
 cd /usr/src
 sudo git clone https://github.com/eustas/ngx_brotli.git
