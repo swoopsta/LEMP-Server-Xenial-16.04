@@ -49,7 +49,7 @@ Before going any further, you'll want to check their sites to ensure you're down
 * [zlib](https://www.zlib.net/)
 ```
 cd /usr/src/
-sudo wget http://nginx.org/download/nginx-1.15.0.tar.gz && sudo tar -xzvf nginx-1.15.0.tar.gz
+sudo wget http://nginx.org/download/nginx-1.15.1.tar.gz && sudo tar -xzvf nginx-1.15.1.tar.gz
 sudo wget https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && sudo tar -xzf v0.33.tar.gz
 sudo wget http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz && sudo tar -xzf ngx_cache_purge-2.3.tar.gz
 sudo wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && sudo tar -xzf openssl-1.1.0h.tar.gz
