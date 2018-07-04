@@ -78,7 +78,7 @@ Since we're compiling Nginx from source, we're going to be taking advantage of t
 * [Nginx Modules Not Built by Default](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
 
 ```
-cd /usr/src/nginx-1.15.0
+cd /usr/src/nginx-1.15.1
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-pcre-jit --without-http_empty_gif_module --without-http_memcached_module --without-http_scgi_module --without-http_uwsgi_module --without-mail_imap_module --without-mail_pop3_module --without-mail_smtp_module --with-pcre=/usr/src/pcre-8.42 --with-zlib=/usr/src/zlib-1.2.11 --with-openssl=/usr/src/openssl-1.1.0h --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
 sudo make
 sudo checkinstall
