@@ -16,10 +16,10 @@ sudo locale-gen en_US.UTF-8
 export LANG=en_US.UTF-8
 ```
 ##### **Removing Stuff We Don't Need**
+First, we'll want to remove anything related to hosting a website that might already be installed on your server. This means, Nginx, Apache, MySQL, or PHP. We want to avoid any conflicts while installing our new stuff.
 ```
-sudo apt remove --purge mysql-server mysql-client mysql-common apache2* php5* nginx -y
+sudo apt remove --purge mysql-server mysql-client mysql-common apache2* php5* nginx* -y && sudo apt autoremove -y && sudo apt autoclean -y
 sudo rm -rf /var/lib/mysql
-sudo apt autoremove -y && sudo apt autoclean -y
 ```
 ##### **Changing SSH Port**
 If you're running a fresh VPS, it's a good idea to harden it against potential attacks. We like to add a tiny bit of extra security as a first step in that process by changing the default SSH port from 22. This is not a replacement for a firewall or fail2ban, and is absolutely not the only thing you'll want to do to protect your server. Anything further is beyond the scope of this tutorial, so you'll need to do your own research on this topic.
