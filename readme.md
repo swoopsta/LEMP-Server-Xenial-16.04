@@ -74,8 +74,9 @@ Now it's time to compile Nginx using the parts we've downloaded. If you're runni
 Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included direct to the lists of which modules are and aren't built by default. If you need something else for a specific use, alter the code below before continuing on.
 
 ###### Nginx Module Reference:
-* [Nginx Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
-* [Nginx Modules Not Built by Default](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
+* [Nginx: Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
+* [Nginx: Non-default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
+* [Nginx: Third Party Modules](https://github.com/agile6v/awesome-nginx#third-modules)
 
 ```
 cd /usr/src/nginx-1.15.1
