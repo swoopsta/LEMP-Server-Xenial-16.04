@@ -67,7 +67,7 @@ sudo git clone https://github.com/eustas/ngx_brotli.git
 cd ngx_brotli
 sudo git submodule update --init --recursive
 ```
-##### **Nginx Module Reference** (Optional)
+##### **Nginx Module Reference**
 Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included some helpful links that will get you up to speed on Nginx modules. If there's a module that you'd like to add to the Nginx build, you'll do so within the `./configure` command in the next section.
 
 * [Nginx: Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
