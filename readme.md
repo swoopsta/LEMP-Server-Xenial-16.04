@@ -34,11 +34,10 @@ sudo service ssh restart
 ### **Nginx**
 We prefer using the **Mainline** version of Nginx instead of the **Stable** version. Mainline tends to have improved bleeding edge feature support, but this can lead to some instability. If you want Stable, change the version in the code below to whatever the latest Stable release is.
 
-We're going to be compiling Nginx from source since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
+We're going to be compiling Nginx from source, since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
 
 ##### **Downloading Nginx**
-First, we'll need to download the latest versions of Nginx and the various Nginx modules we're using.
-Before going any further, you'll want to check their sites to ensure you're downloading the latest version. Don't trust that the versions you see below are the latest releases.
+First, we'll need to download the latest versions of Nginx and the various Nginx modules we're using. Before going any further, you'll want to check ensure that you're downloading the latest version. Don't trust that the versions you see listed below are the latest releases.
 
 ###### Nginx Server Software:
 * [Nginx](http://nginx.org/en/download.html)
@@ -68,16 +67,15 @@ sudo git clone https://github.com/eustas/ngx_brotli.git
 cd ngx_brotli
 sudo git submodule update --init --recursive
 ```
-##### **Installing Nginx**
-Now it's time to compile Nginx using the parts we've downloaded. If you're running version numbers that differ from the versions we had listed above, don't forget to change them below as well.
+##### **Nginx Module Reference** (Optional)
+Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included some helpful links that will get you up to speed on Nginx modules.
 
-Since we're compiling Nginx from source, we're going to be taking advantage of the fact that we can trim some default modules that we won't be needing for running a WordPress server. For your reference, we've included direct to the lists of which modules are and aren't built by default. If you need something else for a specific use, alter the code below before continuing on.
-
-###### Nginx Module Reference:
 * [Nginx: Default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules-built-by-default)
 * [Nginx: Non-default Modules](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#modules_not_default)
 * [Nginx: Third Party Modules](https://github.com/agile6v/awesome-nginx#third-modules)
 
+##### **Installing Nginx**
+It's finally time to compile Nginx using the parts we've downloaded. If you're running version numbers that differ from the versions we had listed above, don't forget to change them inside the `./configure`.
 ```
 cd /usr/src/nginx-1.15.1
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --user=www-data --group=www-data --with-http_gunzip_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_v2_module --with-pcre-jit --without-http_empty_gif_module --without-http_memcached_module --without-http_scgi_module --without-http_uwsgi_module --without-mail_imap_module --without-mail_pop3_module --without-mail_smtp_module --with-pcre=/usr/src/pcre-8.42 --with-zlib=/usr/src/zlib-1.2.11 --with-openssl=/usr/src/openssl-1.1.0h --add-module=/usr/src/ngx_cache_purge-2.3 --add-module=/usr/src/headers-more-nginx-module-0.33 --add-module=/usr/src/ngx_brotli
@@ -242,7 +240,7 @@ Then restart PHP and Nginx.
 sudo service nginx restart && sudo service php7.2-fpm restart
 ```
 #### **Get Your PHP Installation Info**
-Here we're going to write a very basic php file that will display the information related to our PHP installation. This lets us verify that PHP 7 is working correctly. In addition, you can use this to reference your server's PHP configuration settings in the future. We're going to send it straight to your server's default folder, which will be **/var/www/html**. By contrast, domains will be using **/var/www/yourdomain.com/html**.
+Now we're going to write a very basic php file that will display the information related to our PHP installation. This lets us verify that PHP 7 is working correctly. In addition, you can use this to reference your server's PHP configuration settings in the future. We're going to send it straight to your server's default folder, which will be **/var/www/html**. By contrast, domains will be using **/var/www/yourdomain.com/html**.
 ```
 sudo echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 ```
