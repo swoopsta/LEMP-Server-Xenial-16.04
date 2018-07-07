@@ -37,7 +37,7 @@ We prefer using the **Mainline** version of Nginx instead of the **Stable** vers
 We're going to be compiling Nginx from source, since we want to run some custom modules and use the latest version of OpenSSL for HHTP2 support.
 
 ##### **Downloading Nginx**
-First, we'll need to download the latest versions of Nginx and the various Nginx modules we're using. Before going any further, you'll want to check ensure that you're downloading the latest version. Don't trust that the versions you see listed below are the latest releases.
+First, we'll need to download the latest versions of Nginx and the various Nginx modules we're using. Before going any further, you'll want to check the links below to ensure that you're downloading the latest version. Don't trust that the versions you see listed below are the latest releases.
 
 ###### Nginx Server Software:
 * [Nginx](http://nginx.org/en/download.html)
